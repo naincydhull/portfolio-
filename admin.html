@@ -36,6 +36,17 @@ textarea{resize:vertical}
 .tabs{display:flex;gap:8px;margin-bottom:22px;border-bottom:1px solid var(--line)}
 .tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);padding:10px 16px;font-weight:500}
 .tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
+.side{position:fixed;left:0;top:0;bottom:0;width:200px;background:var(--dark);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:8px;z-index:10}
+.side .logo{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;margin-bottom:24px}
+.side .logo b{color:#e0864f}
+.side nav{display:flex;flex-direction:column;gap:6px}
+.side nav a{padding:10px 14px;border-radius:8px;color:#cbbba5;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;transition:background .2s,color .2s}
+.side nav a:hover{background:rgba(255,255,255,.1);color:#fff}
+.side nav a.active{background:var(--brand);color:#fff}
+.side nav a .badge{background:rgba(255,255,255,.15)}
+.side .foot{margin-top:auto;font-size:12px;color:#8a7d70;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)}
+main{max-width:980px;margin:0 auto;padding:28px 20px 80px;margin-left:220px}
+@media (max-width:640px){.side{width:60px;padding:16px 8px}.side .logo,.side nav a span{display:none}.side nav a{justify-content:center;padding:10px 0}.side .foot{display:none}main{margin-left:80px}}
 .badge{background:var(--brand);color:#fff;font-size:12px;border-radius:999px;padding:1px 8px;margin-left:6px}
 .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
 .bar h2{font-size:26px;margin-right:auto}
@@ -97,8 +108,8 @@ dialog h2{font-size:26px}
 </section>
 
 <section id="app" hidden>
-<div class="tabs"><button class="on" data-tab="dashboard">Dashboard</button><button data-tab="projects">Projects</button><button data-tab="messages">Messages<span class="badge" id="msgCount" hidden>0</span></button></div>
-
+<aside class="side"><div class="logo">Naincy<b>.</b> Admin</div><nav><a class="active" data-tab="dashboard" href="#"><span>Dashboard</span></a><a data-tab="projects" href="#"><span>Projects</span></a><a data-tab="messages" href="#"><span>Messages</span><span class="badge" id="msgCount" hidden>0</span></a></nav><div class="foot"><button class="ghost small" id="logout" style="width:100%;color:#fff;border-color:#fff">Log out</button></div></aside>
+<main>
 <div id="tab-dashboard" class="hidden">
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
@@ -114,6 +125,7 @@ dialog h2{font-size:26px}
 <div class="bar"><h2>Messages</h2><button class="ghost" id="refreshMsgs">Refresh</button></div>
 <div class="list" id="msgList"></div>
 </div>
+</main>
 </section>
 </main>
 
@@ -182,8 +194,9 @@ function enter(session){
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#logout').hidden=true;$('#who').hidden=true}
 
 /* ---------- tabs ---------- */
-document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){
-  document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});
+document.querySelectorAll('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
+  e.preventDefault();
+  document.querySelectorAll('.side nav a').forEach(function(x){x.classList.toggle('on',x===b);x.classList.toggle('active',x===b)});
   document.querySelectorAll('[id^="tab-"]').forEach(function(x){x.hidden=true});
   $('#tab-'+b.dataset.tab).hidden=false;
   if(b.dataset.tab==='dashboard')loadDashboard();
