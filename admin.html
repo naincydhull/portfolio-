@@ -85,6 +85,9 @@ dialog h2{font-size:26px}
 @media (max-width:640px){.two{grid-template-columns:1fr}.row{flex-wrap:wrap}.row .acts{width:100%}}
 /* Dashboard stats */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
+.hero{background:linear-gradient(135deg,#a8541f,#e0864f);color:#fff;padding:32px;border-radius:20px;margin-bottom:26px}
+.hero h1{margin:0 0 8px;font-size:28px}
+.hero p{margin:0;opacity:.95;font-size:16px}
 .stat{background:var(--card);border:1px solid var(--line);padding:20px;display:flex;align-items:center;gap:16px}
 .stat .num{font-size:34px;font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--brand)}
 .stat .txt{color:var(--mute);font-size:14px}
@@ -111,6 +114,7 @@ dialog h2{font-size:26px}
 <aside class="side"><div class="logo">Naincy<b>.</b> Admin</div><nav><a class="active" data-tab="dashboard" href="#"><span>Dashboard</span></a><a data-tab="projects" href="#"><span>Projects</span></a><a data-tab="messages" href="#"><span>Messages</span><span class="badge" id="msgCount" hidden>0</span></a></nav><div class="foot"><button class="ghost small" id="logout" style="width:100%;color:#fff;border-color:#fff">Log out</button></div></aside>
 <main>
 <div id="tab-dashboard" class="hidden">
+<div class="hero"><h1>Welcome back, <span id="dashWho"></span></h1><p>Manage your portfolio projects and messages from here.</p></div>
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
 <div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
@@ -189,6 +193,7 @@ var entered=false;
 function enter(session){
   $('#login').hidden=true;$('#app').hidden=false;$('#logout').hidden=false;
   var w=$('#who');w.hidden=false;w.textContent=session.user.email;
+  $('#dashWho').textContent=session.user.email;
   if(!entered){entered=true;loadDashboard()}
 }
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#logout').hidden=true;$('#who').hidden=true}
