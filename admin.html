@@ -12,6 +12,7 @@
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.5}
 h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0}
 [hidden]{display:none!important}
+.hidden{display:none!important}
 .top{background:var(--dark);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .top .logo{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700}
 .top .logo b{color:#e0864f}
@@ -71,6 +72,14 @@ dialog h2{font-size:26px}
 #toast.bad{background:var(--bad)}
 .err{color:var(--bad);font-size:14px;min-height:20px}
 @media (max-width:640px){.two{grid-template-columns:1fr}.row{flex-wrap:wrap}.row .acts{width:100%}}
+/* Dashboard stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
+.stat{background:var(--card);border:1px solid var(--line);padding:20px;display:flex;align-items:center;gap:16px}
+.stat .num{font-size:34px;font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--brand)}
+.stat .txt{color:var(--mute);font-size:14px}
+.stat .txt b{display:block;color:var(--ink);font-size:16px}
+.recent{margin-top:8px}
+.recent h3{font-size:18px;margin-bottom:10px;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -88,7 +97,13 @@ dialog h2{font-size:26px}
 </section>
 
 <section id="app" hidden>
-<div class="tabs"><button class="on" data-tab="projects">Projects</button><button data-tab="messages">Messages<span class="badge" id="msgCount" hidden>0</span></button></div>
+<div class="tabs"><button class="on" data-tab="dashboard">Dashboard</button><button data-tab="projects">Projects</button><button data-tab="messages">Messages<span class="badge" id="msgCount" hidden>0</span></button></div>
+
+<div id="tab-dashboard" class="hidden">
+<div class="stats" id="dashboardStats"></div>
+<div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
+<div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
+</div>
 
 <div id="tab-projects">
 <div class="bar"><h2>Projects</h2><button class="ghost" id="importBtn" hidden>Import current website projects</button><button id="addBtn">+ Add project</button></div>
@@ -162,14 +177,18 @@ var entered=false;
 function enter(session){
   $('#login').hidden=true;$('#app').hidden=false;$('#logout').hidden=false;
   var w=$('#who');w.hidden=false;w.textContent=session.user.email;
-  if(!entered){entered=true;loadProjects();loadMessages()}
+  if(!entered){entered=true;loadDashboard()}
 }
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#logout').hidden=true;$('#who').hidden=true}
 
 /* ---------- tabs ---------- */
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){
   document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});
-  $('#tab-projects').hidden=b.dataset.tab!=='projects';$('#tab-messages').hidden=b.dataset.tab!=='messages';
+  document.querySelectorAll('[id^="tab-"]').forEach(function(x){x.hidden=true});
+  $('#tab-'+b.dataset.tab).hidden=false;
+  if(b.dataset.tab==='dashboard')loadDashboard();
+  else if(b.dataset.tab==='projects')loadProjects();
+  else if(b.dataset.tab==='messages')loadMessages();
 })});
 
 /* ---------- projects list ---------- */
@@ -320,6 +339,32 @@ $('#importBtn').addEventListener('click',async function(){
   }catch(ex){toast(nice(ex),true)}
   b.disabled=false;b.textContent='Import current website projects';loadProjects();
 });
+
+/* ---------- dashboard ---------- */
+async function loadDashboard(){
+  var pr=await sb.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
+  var mr=await sb.from('messages').select('id,name,email,created_at').order('created_at',{ascending:false}).limit(5);
+  var cr=await sb.from('projects').select('id',{count:'exact',head:true});
+  var mr2=await sb.from('messages').select('id',{count:'exact',head:true});
+  var box=$('#dashboardStats');box.replaceChildren();
+  box.appendChild(statCard('Total Projects',cr.count||0,'Projects'));
+  box.appendChild(statCard('Total Messages',mr2.count||0,'Messages'));
+  var rp=$('#recentProj');rp.replaceChildren();
+  var proj=pr.data||[];
+  if(!proj.length){rp.appendChild(el('p','empty','No projects yet.'))}
+  else{proj.forEach(function(p){rp.appendChild(recentItem(p.title,p.kind||'Project'))});}
+  var rm=$('#recentMsg');rm.replaceChildren();
+  var msg=mr.data||[];
+  if(!msg.length){rm.appendChild(el('p','empty','No messages yet.'))}
+  else{msg.forEach(function(m){rm.appendChild(recentItem(m.name||'(no name)',m.email||''))});}
+}
+function statCard(label,val,sub){
+  var c=el('div','stat');c.appendChild(el('div','num',val));
+  var t=el('div','txt');t.appendChild(el('b',null,label));t.appendChild(el('span',null,sub));c.appendChild(t);return c;
+}
+function recentItem(title,sub){
+  var d=el('div','msg');d.appendChild(el('b',null,title));d.appendChild(el('span',null,sub));return d;
+}
 
 /* ---------- messages ---------- */
 async function loadMessages(){
