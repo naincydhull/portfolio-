@@ -83,18 +83,28 @@ dialog h2{font-size:26px}
 .err{color:var(--bad);font-size:14px;min-height:20px}
 /* dashboard */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
-.hero{background:linear-gradient(135deg,#a8541f,#e0864f);color:#fff;padding:32px;border-radius:20px;margin-bottom:26px;display:flex;align-items:center;gap:24px}
-.hero .dash-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.4);flex:0 0 auto;background:rgba(255,255,255,.15)}
-.hero .hero-text{flex:1;min-width:0}
-.hero h1{margin:0 0 8px;font-size:28px}
-.hero p{margin:0;opacity:.95;font-size:16px}
-.stat{background:var(--card);border:1px solid var(--line);padding:20px;display:flex;align-items:center;gap:16px}
-.stat .num{font-size:34px;font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--brand)}
-.stat .txt{color:var(--mute);font-size:14px}
-.stat .txt b{display:block;color:var(--ink);font-size:16px}
-.recent{margin-top:8px}
-.recent h3{font-size:18px;margin-bottom:10px;color:var(--ink)}
-.recent .msg{margin-bottom:8px}
+/* Dashboard — portfolio style */
+.hero{background:#4a3f38;color:#fff;padding:36px 32px;border-radius:20px;margin-bottom:28px;display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:#dcae82;opacity:.25;filter:blur(50px)}
+.hero::after{content:"";position:absolute;left:-40px;bottom:-50px;width:180px;height:180px;border-radius:50%;background:#e0c185;opacity:.2;filter:blur(50px)}
+.hero .dash-photo{width:130px;height:130px;border-radius:24px;object-fit:cover;border:3px solid #d9a46f;flex:0 0 auto;background:#f4ece0;position:relative;z-index:1}
+.hero .hero-text{flex:1;min-width:0;position:relative;z-index:1}
+.hero .hero-text .hi{font-size:13px;letter-spacing:3px;color:#e0864f;text-transform:uppercase;margin-bottom:6px}
+.hero h1{margin:0 0 8px;font-size:30px;font-family:'Playfair Display',Georgia,serif}
+.hero h1 span{color:#e0864f}
+.hero p{margin:0;opacity:.85;font-size:15.5px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat{background:var(--card);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:6px;border-radius:14px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+.stat:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(74,63,56,.12)}
+.stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#c8782f}
+.stat .num{font-size:36px;font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--brand);line-height:1}
+.stat .txt{color:var(--mute);font-size:13px}
+.stat .txt b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+.recent{margin-top:8px;margin-bottom:24px}
+.recent h3{font-family:'Playfair Display',Georgia,serif;font-size:20px;margin-bottom:14px;color:var(--ink);display:inline-block;border-bottom:3px solid #c8782f;padding-bottom:6px}
+.recent .msg{margin-bottom:10px;background:var(--card);border:1px solid var(--line);padding:14px 18px;border-radius:12px;display:flex;align-items:center;gap:12px}
+.recent .msg b{font-size:15px}
+.recent .msg span{font-size:13px;color:var(--mute);margin-left:auto}
 /* forms inside tabs */
 .tabform{display:flex;flex-direction:column;gap:18px}
 .fieldset{background:var(--card);border:1px solid var(--line);padding:20px}
@@ -171,7 +181,7 @@ dialog h2{font-size:26px}
 </div>
 
 <div id="tab-dashboard">
-<div class="hero"><img id="dashPhoto" class="dash-photo" alt="" style="display:none"><div class="hero-text"><h1>Welcome back, <span id="dashName">Admin</span></h1><p>Poori website ki information yahin se manage karein — koi bhi badlav karein aur Save dabayen.</p></div></div>
+<div class="hero"><img id="dashPhoto" class="dash-photo" alt="" style="display:none"><div class="hero-text"><div class="hi">Welcome back</div><h1><span id="dashName">Admin</span></h1><p>Poori website ki information yahin se manage karein — koi bhi badlav karein aur Save dabayen.</p></div></div>
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
 <div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
