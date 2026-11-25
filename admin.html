@@ -17,7 +17,7 @@ h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0}
 .top .logo{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700}
 .top .logo b{color:#e0864f}
 .top .who{margin-left:auto;font-size:14px;color:#e9ddcb}
-main{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+main{max-width:1020px;margin:0 auto;padding:28px 20px 80px}
 .card{background:var(--card);border:1px solid var(--line);padding:24px}
 button,.btn{font:inherit;font-size:15px;cursor:pointer;border:1.5px solid var(--brand);background:var(--brand);color:#fff;padding:10px 20px;text-decoration:none;display:inline-block;line-height:1.3}
 button.ghost,.btn.ghost{background:transparent;color:var(--brand)}
@@ -33,23 +33,21 @@ textarea{resize:vertical}
 .login{max-width:420px;margin:60px auto}
 .login h1{font-size:30px;margin-bottom:6px}
 .login form{display:flex;flex-direction:column;gap:16px;margin-top:20px}
-.tabs{display:flex;gap:8px;margin-bottom:22px;border-bottom:1px solid var(--line)}
-.tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);padding:10px 16px;font-weight:500}
-.tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
-.side{position:fixed;left:0;top:0;bottom:0;width:200px;background:var(--dark);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:8px;z-index:10}
-.side .logo{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;margin-bottom:24px}
+.side{position:fixed;left:0;top:0;bottom:0;width:210px;background:var(--dark);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:8px;z-index:10;overflow:auto}
+.side .logo{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;margin-bottom:20px}
 .side .logo b{color:#e0864f}
-.side nav{display:flex;flex-direction:column;gap:6px}
-.side nav a{padding:10px 14px;border-radius:8px;color:#cbbba5;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;transition:background .2s,color .2s}
+.side nav{display:flex;flex-direction:column;gap:4px}
+.side nav a{padding:9px 13px;border-radius:8px;color:#cbbba5;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;transition:background .2s,color .2s}
 .side nav a:hover{background:rgba(255,255,255,.1);color:#fff}
 .side nav a.active{background:var(--brand);color:#fff}
-.side nav a .badge{background:rgba(255,255,255,.15)}
+.side .badge{background:rgba(255,255,255,.15)}
 .side .foot{margin-top:auto;font-size:12px;color:#8a7d70;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)}
-main{max-width:980px;margin:0 auto;padding:28px 20px 80px;margin-left:220px}
-@media (max-width:640px){.side{width:60px;padding:16px 8px}.side .logo,.side nav a span{display:none}.side nav a{justify-content:center;padding:10px 0}.side .foot{display:none}main{margin-left:80px}}
+main{margin-left:230px}
+@media (max-width:640px){.side{width:58px;padding:16px 6px}.side .logo,.side nav a span{display:none}.side nav a{justify-content:center;padding:10px 0}.side .foot{display:none}main{margin-left:78px}}
 .badge{background:var(--brand);color:#fff;font-size:12px;border-radius:999px;padding:1px 8px;margin-left:6px}
 .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
 .bar h2{font-size:26px;margin-right:auto}
+.bar p{width:100%;margin:0;color:var(--mute);font-size:14px}
 table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line)}
 th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 th{background:#f0e6d6;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#4a3f38}
@@ -59,8 +57,8 @@ tr:hover{background:#fbf7ef}
 .thumb img{width:100%;height:100%;object-fit:cover}
 .meta b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:17px}
 .meta span{font-size:13px;color:var(--mute)}
-.acts{display:flex;gap:6px}
-.msg{background:var(--card);border:1px solid var(--line);padding:16px 18px}
+.acts{display:flex;gap:6px;align-items:center}
+.msg{background:var(--card);border:1px solid var(--line);padding:16px 18px;margin-bottom:12px}
 .msg .h{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:8px}
 .msg .h b{font-size:17px}
 .msg .h span{font-size:13px;color:var(--mute)}
@@ -72,6 +70,7 @@ dialog::backdrop{background:rgba(43,33,27,.55)}
 dialog form{display:flex;flex-direction:column;gap:16px;padding:24px;max-height:92vh;overflow:auto}
 dialog h2{font-size:26px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .shot{border:1px solid var(--line);background:#fff;padding:8px;display:flex;flex-direction:column;gap:6px}
 .shot img{width:100%;height:110px;object-fit:cover;background:#e7d9c2}
@@ -82,8 +81,7 @@ dialog h2{font-size:26px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 20px;max-width:92vw;z-index:50;font-size:15px}
 #toast.bad{background:var(--bad)}
 .err{color:var(--bad);font-size:14px;min-height:20px}
-@media (max-width:640px){.two{grid-template-columns:1fr}.row{flex-wrap:wrap}.row .acts{width:100%}}
-/* Dashboard stats */
+/* dashboard */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
 .hero{background:linear-gradient(135deg,#a8541f,#e0864f);color:#fff;padding:32px;border-radius:20px;margin-bottom:26px}
 .hero h1{margin:0 0 8px;font-size:28px}
@@ -94,10 +92,36 @@ dialog h2{font-size:26px}
 .stat .txt b{display:block;color:var(--ink);font-size:16px}
 .recent{margin-top:8px}
 .recent h3{font-size:18px;margin-bottom:10px;color:var(--ink)}
+.recent .msg{margin-bottom:8px}
+/* forms inside tabs */
+.tabform{display:flex;flex-direction:column;gap:18px}
+.fieldset{background:var(--card);border:1px solid var(--line);padding:20px}
+.fieldset>h3{font-size:19px;margin-bottom:4px}
+.fieldset>.hint{display:block;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.grid2,.two,.three{grid-template-columns:1fr}}
+/* list editor */
+.list{display:flex;flex-direction:column;gap:14px}
+.lrow{border:1px solid var(--line);background:#fff;padding:14px;display:grid;gap:12px;grid-template-columns:1fr auto;align-items:start}
+.lrow .fields{display:grid;gap:12px}
+.lrow .acts{justify-content:flex-end}
+.lrow label{font-size:13px}
+.lrow input,.lrow textarea,.lrow select{font-size:15px;padding:8px 10px}
+.addrow{display:flex;gap:10px}
+/* setup banner */
+.banner{border:1.5px solid var(--bad);background:#fdecea;color:#7a1a15;padding:18px 20px;margin-bottom:22px}
+.banner h3{font-size:18px;margin-bottom:6px;color:#7a1a15}
+.banner ol{margin:8px 0 0;padding-left:20px;font-size:14.5px}
+.banner code{background:#fff;border:1px solid #e6bcb7;padding:1px 6px;border-radius:4px}
+.ok-note{border:1.5px solid #bfe0cb;background:#eefaf2;color:#1d5c38;padding:12px 16px;margin-bottom:20px;font-size:14.5px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.prev{border:1px solid var(--line);background:#fff;padding:8px;display:flex;flex-direction:column;gap:8px}
+.prev img{width:100%;height:110px;object-fit:cover;background:#e7d9c2}
+.sep{border-top:1px solid var(--line);margin:6px 0}
 </style>
 </head>
 <body>
-<header class="top"><span class="logo">Naincy<b>.</b> Admin</span><span class="who" id="who" hidden></span><button class="ghost small" id="logout" hidden style="color:#fff;border-color:#fff">Log out</button></header>
+<header class="top"><span class="logo">Naincy<b>.</b> Admin</span><span class="who" id="who" hidden></span></header>
 <main>
 <section id="login" class="card login">
 <h1>Admin login</h1>
@@ -111,24 +135,233 @@ dialog h2{font-size:26px}
 </section>
 
 <section id="app" hidden>
-<aside class="side"><div class="logo">Naincy<b>.</b> Admin</div><nav><a class="active" data-tab="dashboard" href="#"><span>Dashboard</span></a><a data-tab="projects" href="#"><span>Projects</span></a><a data-tab="messages" href="#"><span>Messages</span><span class="badge" id="msgCount" hidden>0</span></a></nav><div class="foot"><button class="ghost small" id="logout" style="width:100%;color:#fff;border-color:#fff">Log out</button></div></aside>
+<aside class="side">
+<div class="logo">Naincy<b>.</b> Admin</div>
+<nav>
+<a class="active" data-tab="dashboard" href="#"><span>Dashboard</span></a>
+<a data-tab="profile" href="#"><span>Profile</span></a>
+<a data-tab="about" href="#"><span>About</span></a>
+<a data-tab="education" href="#"><span>Education</span></a>
+<a data-tab="skills" href="#"><span>Skills</span></a>
+<a data-tab="projects" href="#"><span>Projects</span></a>
+<a data-tab="contact" href="#"><span>Contact</span></a>
+<a data-tab="settings" href="#"><span>Settings</span></a>
+<a data-tab="messages" href="#"><span>Messages</span><span class="badge" id="msgCount" hidden>0</span></a>
+</nav>
+<div class="foot"><button class="ghost small" id="logout" style="width:100%;color:#fff;border-color:#fff">Log out</button></div>
+</aside>
 <main>
-<div id="tab-dashboard" class="hidden">
-<div class="hero"><h1>Welcome back, <span id="dashWho"></span></h1><p>Manage your portfolio projects and messages from here.</p></div>
+
+<div class="banner" id="setupWarn" hidden>
+<h3>Supabase table <code>site_content</code> nahi mili</h3>
+<p style="margin:6px 0 0;font-size:14.5px">Website ki nayi information save karne ke liye ek baar setup chalana hoga:</p>
+<ol>
+<li>Supabase Dashboard kholen → <b>SQL Editor</b> → <b>New query</b></li>
+<li>Repo ki <code>setup.sql</code> file ka poora content paste karein → <b>Run</b> dabayen</li>
+<li>Phir yahan <b>Reload</b> karein</li>
+</ol>
+<p style="margin:10px 0 0"><button class="ghost small" id="retrySetup">Reload</button></p>
+</div>
+
+<div id="tab-dashboard">
+<div class="hero"><h1>Welcome back, <span id="dashWho"></span></h1><p>Poori website ki information yahin se manage karein — koi bhi badlav karein aur Save dabayen.</p></div>
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
 <div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
 </div>
 
-<div id="tab-projects">
-<div class="bar"><h2>Projects</h2><button class="ghost" id="importBtn" hidden>Import current website projects</button><button id="addBtn">+ Add project</button></div>
+<!-- ============ PROFILE / HERO ============ -->
+<div id="tab-profile" hidden>
+<div class="bar"><h2>Profile / Hero</h2><button type="button" class="saveTab" data-key="profile">Save changes</button></div>
+<p class="hint" style="margin-top:-8px">Website ka sabse upar wala (hero) hissa. Save karne ke baad website par refresh karke dekhein.</p>
+<form class="tabform" id="form-profile" onsubmit="return false">
+<div class="fieldset">
+<h3>Heading</h3><span class="hint">Upar chhoti line, naam aur tagline.</span>
+<div class="grid2">
+<label>Small line<input id="p_eyebrow" placeholder="Portfolio"></label>
+<label>Tagline <span class="hint">ek shabd space se alag</span><input id="p_tagline" placeholder="Digital Marketing & Web Development"></label>
+</div>
+<div class="grid2" style="margin-top:16px">
+<label>First name<input id="p_first" placeholder="Naincy"></label>
+<label>Last name<input id="p_last" placeholder="Dhull"></label>
+</div>
+<label style="margin-top:16px">Intro paragraph<textarea id="p_intro" rows="3" maxlength="600"></textarea></label>
+</div>
+
+<div class="fieldset">
+<h3>Buttons</h3><span class="hint">Hero ke do buttons aur header ka "Say Hello" button.</span>
+<div class="grid2">
+<label>Primary button text<input id="p_cta1" placeholder="View Projects"></label>
+<label>Primary link<input id="p_cta1h" placeholder="#projects or https://…"></label>
+</div>
+<div class="grid2" style="margin-top:16px">
+<label>Secondary button text<input id="p_cta2" placeholder="Contact Me"></label>
+<label>Secondary link<input id="p_cta2h" placeholder="#contact or https://…"></label>
+</div>
+<label style="margin-top:16px">Header button text<input id="p_hello" placeholder="Say Hello"></label>
+</div>
+
+<div class="fieldset">
+<h3>Photo badge</h3><span class="hint">Photo ke neeche wali chhoti patti.</span>
+<label>Badge text<input id="p_badge" placeholder="Digital Marketing with AI"></label>
+</div>
+
+<div class="fieldset">
+<h3>Hero photo</h3><span class="hint">File chunte hi image upload ho jayegi (automatically resize hoti hai).</span>
+<input type="file" accept="image/*" id="p_heroFile">
+<div class="photos" id="p_heroPrev" style="margin-top:12px"></div>
+<input type="hidden" id="p_heroUrl">
+<div style="margin-top:10px"><button type="button" class="ghost small" id="p_heroClear">Remove photo</button></div>
+</div>
+<div class="err" id="err-profile" role="alert"></div>
+</form>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<div id="tab-about" hidden>
+<div class="bar"><h2>About</h2><button type="button" class="saveTab" data-key="about">Save changes</button></div>
+<p class="hint" style="margin-top:-8px">"About Me" section — paragraphs, cards aur photo.</p>
+<form class="tabform" id="form-about" onsubmit="return false">
+<div class="fieldset">
+<div class="grid2">
+<label>Small line<input id="a_eyebrow" placeholder="Introduction"></label>
+<label>Heading<input id="a_head" placeholder="About Me"></label>
+</div>
+<label style="margin-top:16px">Paragraph 1<textarea id="a_p1" rows="4" maxlength="1200"></textarea></label>
+<label style="margin-top:16px">Paragraph 2<textarea id="a_p2" rows="4" maxlength="1200"></textarea></label>
+</div>
+
+<div class="fieldset">
+<h3>About photo</h3><span class="hint">File chunte hi upload ho jayegi.</span>
+<input type="file" accept="image/*" id="a_photoFile">
+<div class="photos" id="a_photoPrev" style="margin-top:12px"></div>
+<input type="hidden" id="a_photoUrl">
+<div style="margin-top:10px"><button type="button" class="ghost small" id="a_photoClear">Remove photo</button></div>
+</div>
+
+<div class="fieldset">
+<h3>Cards</h3><span class="hint">Photo ke baayein wale 3 bullet points.</span>
+<div class="list" id="aboutCards"></div>
+<div class="addrow" style="margin-top:12px"><button type="button" class="ghost small" id="aboutCardsAdd">+ Add card</button></div>
+</div>
+<div class="err" id="err-about" role="alert"></div>
+</form>
+</div>
+
+<!-- ============ EDUCATION ============ -->
+<div id="tab-education" hidden>
+<div class="bar"><h2>Education</h2><button type="button" class="saveTab" data-key="education">Save changes</button></div>
+<p class="hint" style="margin-top:-8px">Learning journey ka timeline — upar se neeche.</p>
+<form class="tabform" id="form-education" onsubmit="return false">
+<div class="fieldset">
+<div class="grid2">
+<label>Small line<input id="e_eyebrow" placeholder="Education"></label>
+<label>Heading<input id="e_head" placeholder="My learning journey"></label>
+</div>
+</div>
+<div class="fieldset">
+<h3>Items</h3><span class="hint">Percent khaali chhodenge to woh line nahi dikhegi.</span>
+<div class="list" id="eduItems"></div>
+<div class="addrow" style="margin-top:12px"><button type="button" class="ghost small" id="eduItemsAdd">+ Add education</button></div>
+</div>
+<div class="err" id="err-education" role="alert"></div>
+</form>
+</div>
+
+<!-- ============ SKILLS ============ -->
+<div id="tab-skills" hidden>
+<div class="bar"><h2>Skills &amp; Toolkit</h2><button type="button" class="saveTab" data-key="skills">Save changes</button></div>
+<p class="hint" style="margin-top:-8px">"What I do" cards aur "Tools I Use" ki list.</p>
+<form class="tabform" id="form-skills" onsubmit="return false">
+<div class="fieldset">
+<h3>Skills section</h3>
+<div class="grid2">
+<label>Small line<input id="s_eyebrow" placeholder="Skills"></label>
+<label>Heading<input id="s_head" placeholder="What I do"></label>
+</div>
+<div class="list" id="skillCards" style="margin-top:16px"></div>
+<div class="addrow" style="margin-top:12px"><button type="button" class="ghost small" id="skillCardsAdd">+ Add skill</button></div>
+</div>
+
+<div class="fieldset">
+<h3>Toolkit section</h3>
+<div class="grid2">
+<label>Small line<input id="s_toolEyebrow" placeholder="Toolkit"></label>
+<label>Heading<input id="s_toolHead" placeholder="Tools I Use"></label>
+</div>
+<div class="list" id="toolList" style="margin-top:16px"></div>
+<div class="addrow" style="margin-top:12px"><button type="button" class="ghost small" id="toolListAdd">+ Add tool</button></div>
+</div>
+<div class="err" id="err-skills" role="alert"></div>
+</form>
+</div>
+
+<!-- ============ PROJECTS ============ -->
+<div id="tab-projects" hidden>
+<div class="bar"><h2>Projects</h2>
+<button class="ghost" id="importBtn" hidden>Import current website projects</button>
+<button id="addBtn">+ Add project</button>
+<button type="button" class="saveTab" data-key="projects">Save section heading</button>
+</div>
+<div class="fieldset" style="margin-bottom:20px">
+<h3>Section heading</h3>
+<div class="grid2">
+<label>Small line<input id="j_eyebrow" placeholder="Projects"></label>
+<label>Heading<input id="j_head" placeholder="Things I've built"></label>
+</div>
+<label style="margin-top:16px">Subtitle<textarea id="j_sub" rows="2" maxlength="400"></textarea></label>
+</div>
 <div class="list" id="projList"></div>
 </div>
 
+<!-- ============ CONTACT ============ -->
+<div id="tab-contact" hidden>
+<div class="bar"><h2>Contact</h2><button type="button" class="saveTab" data-key="contact">Save changes</button></div>
+<p class="hint" style="margin-top:-8px">"Let's work together" box ki contact list aur footer ke "Get in touch" links — dono yahin se badalte hain.</p>
+<form class="tabform" id="form-contact" onsubmit="return false">
+<div class="fieldset">
+<label>Heading<input id="c_head" placeholder="Let's work together"></label>
+</div>
+<div class="fieldset">
+<h3>Contact items</h3>
+<div class="list" id="contactItems" style="margin-top:12px"></div>
+<div class="addrow" style="margin-top:12px"><button type="button" class="ghost small" id="contactItemsAdd">+ Add item</button></div>
+</div>
+<div class="err" id="err-contact" role="alert"></div>
+</form>
+</div>
+
+<!-- ============ SETTINGS ============ -->
+<div id="tab-settings" hidden>
+<div class="bar"><h2>Settings</h2><button type="button" class="saveTab" data-key="settings">Save changes</button></div>
+<form class="tabform" id="form-settings" onsubmit="return false">
+<div class="fieldset">
+<h3>Site</h3><span class="hint">Browser tab ka title, Google wali description aur logo ka naam.</span>
+<label>Website title<input id="st_title" placeholder="Naincy Dhull – Portfolio"></label>
+<label style="margin-top:16px">Meta description<textarea id="st_meta" rows="2" maxlength="300"></textarea></label>
+<label style="margin-top:16px">Logo / brand name <span class="hint">ant me dot lagayein, woh alag rang me dikhega</span><input id="st_brand" placeholder="Naincy."></label>
+</div>
+<div class="fieldset">
+<h3>Footer</h3>
+<label>Footer line<input id="st_blurb" placeholder="Websites, small products and digital marketing…"></label>
+<label style="margin-top:16px">Copyright line<input id="st_copy" placeholder="© 2026 Naincy Dhull. All rights reserved."></label>
+</div>
+<div class="err" id="err-settings" role="alert"></div>
+</form>
+
+<div class="fieldset" style="margin-top:20px">
+<h3>Import from the current website</h3>
+<span class="hint">Jo information abhi index.html me likhi hai, use ek click me database me daal dein. Uske baad har cheez admin se edit ho jayegi. (Photos database me nahi jaati — unhe baad me upload karein.)</span>
+<button type="button" id="seedBtn">Load website content into the database</button>
+</div>
+</div>
+
+<!-- ============ MESSAGES ============ -->
 <div id="tab-messages" hidden>
 <div class="bar"><h2>Messages</h2><button class="ghost" id="refreshMsgs">Refresh</button></div>
 <div class="list" id="msgList"></div>
 </div>
+
 </main>
 </section>
 </main>
@@ -165,6 +398,7 @@ var SB_URL='https://jgieoxivnciypxxlnzuj.supabase.co';
 var SB_KEY='sb_publishable_BvfyK8tvgNv_iPEokPJJmA_Fmy3iyN7';
 var BUCKET='project-images';
 var $=function(s){return document.querySelector(s)};
+var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 if(!window.supabase){document.body.insertAdjacentHTML('afterbegin','<p style="padding:20px;color:#b3261e">Could not load the Supabase library. Check your internet connection and reload.</p>');return;}
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
 
@@ -173,6 +407,8 @@ function parseImg(u){var i=String(u).indexOf('#cap=');return i<0?{url:String(u),
 function makeImg(url,cap){return cap?url+'#cap='+encodeURIComponent(cap):url}
 function safeUrl(u){return /^https?:\/\//i.test(u||'')}
 function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+function val(id){var e=$(id);return e?String(e.value||'').trim():''}
+function setVal(id,v){var e=$(id);if(e)e.value=v==null?'':v}
 
 var toastT;
 function toast(msg,bad){var t=$('#toast');t.textContent=msg;t.className=bad?'bad':'';t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},3600)}
@@ -191,25 +427,249 @@ sb.auth.onAuthStateChange(function(_ev,session){setTimeout(function(){session?en
 sb.auth.getSession().then(function(r){if(r.data&&r.data.session)enter(r.data.session)});
 var entered=false;
 function enter(session){
-  $('#login').hidden=true;$('#app').hidden=false;$('#logout').hidden=false;
+  $('#login').hidden=true;$('#app').hidden=false;
   var w=$('#who');w.hidden=false;w.textContent=session.user.email;
   $('#dashWho').textContent=session.user.email;
-  if(!entered){entered=true;loadDashboard()}
+  if(!entered){entered=true;loadContent();loadDashboard()}
 }
-function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#logout').hidden=true;$('#who').hidden=true}
+function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#who').hidden=true}
 
 /* ---------- tabs ---------- */
-document.querySelectorAll('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
+$$('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
   e.preventDefault();
-  document.querySelectorAll('.side nav a').forEach(function(x){x.classList.toggle('on',x===b);x.classList.toggle('active',x===b)});
-  document.querySelectorAll('[id^="tab-"]').forEach(function(x){x.hidden=true});
+  $$('.side nav a').forEach(function(x){x.classList.toggle('active',x===b)});
+  $$('[id^="tab-"]').forEach(function(x){x.hidden=true});
   $('#tab-'+b.dataset.tab).hidden=false;
   if(b.dataset.tab==='dashboard')loadDashboard();
   else if(b.dataset.tab==='projects')loadProjects();
   else if(b.dataset.tab==='messages')loadMessages();
 })});
 
-/* ---------- projects list ---------- */
+/* =========================================================
+   WEBSITE CONTENT  (table: site_content)
+========================================================= */
+var KEYS=['profile','about','education','skills','projects','contact','settings'];
+var content={};
+KEYS.forEach(function(k){content[k]={}});
+var setupBroken=false;
+
+async function loadContent(){
+  var r=await sb.from('site_content').select('*');
+  if(r.error){
+    setupBroken=true;$('#setupWarn').hidden=false;
+    console.warn('site_content:',r.error);
+    return;
+  }
+  setupBroken=false;$('#setupWarn').hidden=true;
+  (r.data||[]).forEach(function(row){content[row.key]=row.value||{}});
+  fillAll();
+  if(!$('#tab-dashboard').hidden)loadDashboard();
+}
+$('#retrySetup').addEventListener('click',function(){location.reload()});
+
+async function saveContent(key,value,btn){
+  if(setupBroken){toast('Pehle setup.sql run karein.',true);return false}
+  if(btn){btn.disabled=true;var old=btn.textContent;btn.textContent='Saving…'}
+  content[key]=value;
+  var r=await sb.from('site_content').upsert({key:key,value:value,updated_at:new Date().toISOString()});
+  if(btn){btn.disabled=false;btn.textContent=old}
+  if(r.error){toast(nice(r.error),true);return false}
+  toast('Saved — website par refresh karke dekhein');
+  return true;
+}
+
+/* generic list editor ------------------------------------- */
+function renderList(box,fields,items){
+  box._fields=fields;box._items=items;
+  box.replaceChildren();
+  items.forEach(function(it){
+    var row=el('div','lrow'),fields_ = el('div','fields');
+    fields.forEach(function(f){
+      var lab=el('label');
+      lab.appendChild(document.createTextNode(f.l));
+      var inp;
+      if(f.t==='textarea'){inp=el('textarea');inp.rows=f.rows||2}
+      else if(f.t==='select'){inp=el('select');(f.opts||[]).forEach(function(o){var op=el('option',null,o);op.value=o;if(o===it[f.k])op.selected=true;inp.appendChild(op)})}
+      else{inp=el('input');inp.type='text'}
+      if(f.ph)inp.placeholder=f.ph;
+      inp.value=it[f.k]==null?'':it[f.k];
+      inp.dataset.k=f.k;
+      lab.appendChild(inp);fields_.appendChild(lab);
+    });
+    var acts=el('div','acts');
+    [['up','▲','Move up'],['dn','▼','Move down'],['del','✕','Remove']].forEach(function(a){
+      var b=el('button','ghost small',a[1]);b.type='button';b.dataset.act=a[0];b.title=a[2];
+      acts.appendChild(b);
+    });
+    row.append(fields_,acts);box.appendChild(row);
+  });
+  if(!items.length)box.appendChild(el('p','empty','Abhi kuch nahi hai — "+ Add" dabayein.'));
+}
+function readList(box){
+  return $$('.lrow',box).map(function(row){
+    var o={};
+    $$('[data-k]',row).forEach(function(i){o[i.dataset.k]=String(i.value||'').trim()});
+    return o;
+  });
+}
+function wireList(boxSel,addSel,empty){
+  var box=$(boxSel);
+  box.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-act]');if(!b)return;
+    e.preventDefault();
+    var row=b.closest('.lrow');if(!row)return;
+    var items=readList(box);
+    var i=[].indexOf.call(row.parentNode.children,row);
+    if(b.dataset.act==='del')items.splice(i,1);
+    else if(b.dataset.act==='up'&&i>0)items.splice(i-1,0,items.splice(i,1)[0]);
+    else if(b.dataset.act==='dn'&&i<items.length-1)items.splice(i+1,0,items.splice(i,1)[0]);
+    renderList(box,box._fields||[],items);
+  });
+  $(addSel).addEventListener('click',function(){
+    var items=readList(box);
+    var copy={};Object.keys(empty).forEach(function(k){copy[k]=empty[k]});
+    items.push(copy);
+    renderList(box,box._fields||[],items);
+    var rows=box.querySelectorAll('.lrow');
+    if(rows.length){var last=rows[rows.length-1].querySelector('input,textarea');if(last)last.focus()}
+  });
+}
+function fillList(boxSel,items,fields,empty){
+  var box=$(boxSel);
+  renderList(box,fields,(items&&items.length)?items.map(function(it){
+    var o={};Object.keys(empty).forEach(function(k){o[k]=it&&it[k]!=null?it[k]:''});return o;
+  }):[Object.assign({},empty)]);
+}
+
+/* photo upload helper ------------------------------------- */
+async function compress(blobOrFile,maxW){
+  var bmp=await createImageBitmap(blobOrFile);
+  var sc=Math.min(1,(maxW||1400)/bmp.width),c=document.createElement('canvas');
+  c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);
+  var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,0,0,c.width,c.height);
+  return new Promise(function(res){c.toBlob(res,'image/jpeg',0.85)});
+}
+async function upload(blob,path){
+  path=path||('projects/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg');
+  var r=await sb.storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',cacheControl:'31536000'});
+  if(r.error)throw r.error;
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+function photoField(fileSel,prevSel,urlSel,clearSel,path){
+  var urlInput=$(urlSel);
+  function draw(){
+    var box=$(prevSel);box.replaceChildren();
+    var u=urlInput.value;
+    if(u){var p=el('div','prev');var im=el('img');im.src=u;im.alt='';p.appendChild(im);box.appendChild(p)}
+  }
+  $(fileSel).addEventListener('change',async function(e){
+    var f=e.target.files&&e.target.files[0];if(!f)return;
+    try{
+      var btn=e.target;btn.disabled=true;
+      urlInput.value=await upload(await compress(f,1400),path+'/'+Date.now()+'.jpg');
+      draw();toast('Photo uploaded');
+    }catch(ex){toast(nice(ex),true)}
+    btn.disabled=false;e.target.value='';
+  });
+  $(clearSel).addEventListener('click',function(){urlInput.value='';draw()});
+  return {draw:draw};
+}
+var heroPhoto=photoField('#p_heroFile','#p_heroPrev','#p_heroUrl','#p_heroClear','profile');
+var aboutPhoto=photoField('#a_photoFile','#a_photoPrev','#a_photoUrl','#a_photoClear','about');
+
+/* ---------- field definitions ---------- */
+var F={
+  aboutCards:[{k:'title',l:'Title'},{k:'text',l:'Text',t:'textarea'}],
+  edu:[{k:'badge',l:'Year / badge',ph:'2024'},{k:'title',l:'Title',ph:'Class 10th'},{k:'percent',l:'Percent (optional)',ph:'79'},{k:'desc',l:'Description',t:'textarea'}],
+  skills:[{k:'title',l:'Skill title',ph:'Web development'},{k:'desc',l:'Description',t:'textarea'}],
+  tools:[{k:'name',l:'Tool name',ph:'ChatGPT'},{k:'icon',l:'Icon image URL (optional)',ph:'https://… (chhod sakte hain)'}],
+  contact:[{k:'label',l:'Label',ph:'Email'},{k:'value',l:'Value',ph:'you@example.com'},{k:'href',l:'Link',ph:'https://…  ya  mailto:…'},{k:'type',l:'Type',t:'select',opts:['email','linkedin','github','instagram','whatsapp','phone','location','website','other']}]
+};
+wireList('#aboutCards','#aboutCardsAdd',{title:'',text:''});
+wireList('#eduItems','#eduItemsAdd',{badge:'',title:'',percent:'',desc:''});
+wireList('#skillCards','#skillCardsAdd',{title:'',desc:''});
+wireList('#toolList','#toolListAdd',{name:'',icon:''});
+wireList('#contactItems','#contactItemsAdd',{label:'',value:'',href:'',type:'other'});
+
+/* ---------- fill forms ---------- */
+function fillAll(){
+  var p=content.profile||{};
+  setVal('#p_eyebrow',p.eyebrow);setVal('#p_tagline',p.tagline);
+  setVal('#p_first',p.firstName);setVal('#p_last',p.lastName);setVal('#p_intro',p.intro);
+  setVal('#p_cta1',p.ctaPrimaryLabel);setVal('#p_cta1h',p.ctaPrimaryHref);
+  setVal('#p_cta2',p.ctaSecondaryLabel);setVal('#p_cta2h',p.ctaSecondaryHref);
+  setVal('#p_hello',p.helloLabel);setVal('#p_badge',p.badge);
+  setVal('#p_heroUrl',p.heroPhoto||'');heroPhoto.draw();
+
+  var a=content.about||{};
+  setVal('#a_eyebrow',a.eyebrow);setVal('#a_head',a.heading);
+  setVal('#a_p1',a.p1);setVal('#a_p2',a.p2);
+  setVal('#a_photoUrl',a.photo||'');aboutPhoto.draw();
+  fillList('#aboutCards',a.cards,F.aboutCards,{title:'',text:''});
+
+  var e=content.education||{};
+  setVal('#e_eyebrow',e.eyebrow);setVal('#e_head',e.heading);
+  fillList('#eduItems',e.items,F.edu,{badge:'',title:'',percent:'',desc:''});
+
+  var s=content.skills||{};
+  setVal('#s_eyebrow',s.eyebrow);setVal('#s_head',s.heading);
+  fillList('#skillCards',s.cards,F.skills,{title:'',desc:''});
+  setVal('#s_toolEyebrow',s.toolkitEyebrow);setVal('#s_toolHead',s.toolkitHeading);
+  fillList('#toolList',s.tools,F.tools,{name:'',icon:''});
+
+  var j=content.projects||{};
+  setVal('#j_eyebrow',j.eyebrow);setVal('#j_head',j.heading);setVal('#j_sub',j.subtitle);
+
+  var c=content.contact||{};
+  setVal('#c_head',c.heading);
+  fillList('#contactItems',c.items,F.contact,{label:'',value:'',href:'',type:'other'});
+
+  var t=content.settings||{};
+  setVal('#st_title',t.siteTitle);setVal('#st_meta',t.metaDescription);setVal('#st_brand',t.brand);
+  setVal('#st_blurb',t.footerBlurb);setVal('#st_copy',t.copyright);
+}
+
+/* ---------- save buttons ---------- */
+$$('.saveTab').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var key=btn.dataset.key,err=$('#err-'+key);if(err)err.textContent='';
+    var data;
+    if(key==='profile')data={
+      eyebrow:val('#p_eyebrow'),tagline:val('#p_tagline'),firstName:val('#p_first'),lastName:val('#p_last'),
+      intro:val('#p_intro'),ctaPrimaryLabel:val('#p_cta1'),ctaPrimaryHref:val('#p_cta1h'),
+      ctaSecondaryLabel:val('#p_cta2'),ctaSecondaryHref:val('#p_cta2h'),
+      helloLabel:val('#p_hello'),badge:val('#p_badge'),heroPhoto:val('#p_heroUrl')
+    };
+    else if(key==='about')data={
+      eyebrow:val('#a_eyebrow'),heading:val('#a_head'),p1:val('#a_p1'),p2:val('#a_p2'),
+      photo:val('#a_photoUrl'),cards:readList($('#aboutCards')).filter(function(x){return x.title||x.text})
+    };
+    else if(key==='education')data={
+      eyebrow:val('#e_eyebrow'),heading:val('#e_head'),
+      items:readList($('#eduItems')).filter(function(x){return x.title})
+    };
+    else if(key==='skills')data={
+      eyebrow:val('#s_eyebrow'),heading:val('#s_head'),
+      cards:readList($('#skillCards')).filter(function(x){return x.title}),
+      toolkitEyebrow:val('#s_toolEyebrow'),toolkitHeading:val('#s_toolHead'),
+      tools:readList($('#toolList')).filter(function(x){return x.name})
+    };
+    else if(key==='projects')data={eyebrow:val('#j_eyebrow'),heading:val('#j_head'),subtitle:val('#j_sub')};
+    else if(key==='contact')data={
+      heading:val('#c_head'),
+      items:readList($('#contactItems')).filter(function(x){return x.label||x.value})
+    };
+    else if(key==='settings')data={
+      siteTitle:val('#st_title'),metaDescription:val('#st_meta'),brand:val('#st_brand'),
+      footerBlurb:val('#st_blurb'),copyright:val('#st_copy')
+    };
+    saveContent(key,data,btn);
+  });
+});
+
+/* =========================================================
+   PROJECTS (table: projects)
+========================================================= */
 var projects=[];
 async function loadProjects(){
   var r=await sb.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
@@ -252,22 +712,7 @@ async function removeFiles(urls){
   if(paths.length){try{await sb.storage.from(BUCKET).remove(paths)}catch(e){}}
 }
 
-/* ---------- image helpers ---------- */
-async function compress(blobOrFile,maxW){
-  var bmp=await createImageBitmap(blobOrFile);
-  var sc=Math.min(1,(maxW||1400)/bmp.width),c=document.createElement('canvas');
-  c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);
-  var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,0,0,c.width,c.height);
-  return new Promise(function(res){c.toBlob(res,'image/jpeg',0.85)});
-}
-async function upload(blob){
-  var path='projects/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
-  var r=await sb.storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',cacheControl:'31536000'});
-  if(r.error)throw r.error;
-  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-}
-
-/* ---------- editor ---------- */
+/* ---------- project editor ---------- */
 var editing=null,imgs=[];
 function openEditor(p){
   editing=p||null;imgs=[];$('#editorErr').textContent='';
@@ -358,7 +803,101 @@ $('#importBtn').addEventListener('click',async function(){
   b.disabled=false;b.textContent='Import current website projects';loadProjects();
 });
 
-/* ---------- dashboard ---------- */
+/* =========================================================
+   Import EVERYTHING that is written in index.html
+========================================================= */
+$('#seedBtn').addEventListener('click',async function(){
+  if(setupBroken){toast('Pehle setup.sql run karein.',true);return}
+  if(!confirm('Jo information abhi index.html me likhi hai, use database me daal dein? Baad me aap sab kuch admin se edit kar sakenge.'))return;
+  var b=$('#seedBtn');b.disabled=true;b.textContent='Reading website…';
+  try{
+    var html=await (await fetch('index.html',{cache:'no-store'})).text();
+    var doc=new DOMParser().parseFromString(html,'text/html');
+    var t=function(sel){var e=doc.querySelector(sel);return e?e.textContent.replace(/\s+/g,' ').trim():''};
+    var ta=function(sel){var e=doc.querySelector(sel);return e?e.textContent.replace(/\s+/g,' ').trim():''};
+
+    /* profile / hero */
+    var name=t('#sc-name').split(/\s+/);
+    var ctas=[].slice.call(doc.querySelectorAll('#sc-ctas a'));
+    var profile={
+      eyebrow:t('#sc-eyebrow'),firstName:name[0]||'',lastName:name.slice(1).join(' '),
+      tagline:t('#sc-tag'),intro:ta('#sc-intro'),
+      ctaPrimaryLabel:ctas[0]?ctas[0].textContent.trim():'',ctaPrimaryHref:ctas[0]?ctas[0].getAttribute('href')||'':'',
+      ctaSecondaryLabel:ctas[1]?ctas[1].textContent.trim():'',ctaSecondaryHref:ctas[1]?ctas[1].getAttribute('href')||'':'',
+      helloLabel:t('#sc-hello'),badge:t('#sc-badge'),heroPhoto:''
+    };
+
+    /* about */
+    var cards=[].slice.call(doc.querySelectorAll('#sc-about-cards > div > p')).map(function(p){
+      var b2=p.querySelector('b'),title=b2?b2.textContent.trim():'';
+      var text=p.textContent.replace(title,'').replace(/^[\s—–-]+/,'').trim();
+      return {title:title,text:text};
+    }).filter(function(c){return c.title||c.text});
+    var about={eyebrow:t('#sc-about-eyebrow'),heading:t('#sc-about-head'),p1:ta('#sc-about-p1'),p2:ta('#sc-about-p2'),photo:'',cards:cards};
+
+    /* education */
+    var edu={eyebrow:t('#sc-edu-eyebrow'),heading:t('#sc-edu-head'),items:[]};
+    [].slice.call(doc.querySelectorAll('#eduWrap .edu-item')).forEach(function(it){
+      var span=it.querySelector('span'),h=it.querySelector('h3'),p=it.querySelector('p'),cnt=it.querySelector('.edu-count');
+      var desc=p?p.textContent.replace(/\s+/g,' ').trim():'';
+      edu.items.push({badge:span?span.textContent.trim():'',title:h?h.textContent.trim():'',
+        percent:cnt?(cnt.getAttribute('data-to')||cnt.textContent.trim()):'',desc:desc});
+    });
+
+    /* skills + toolkit */
+    var skills={eyebrow:t('#sc-skills-eyebrow'),heading:t('#sc-skills-head'),cards:[],toolkitEyebrow:t('#sc-toolkit-eyebrow'),toolkitHeading:t('#sc-toolkit-head'),tools:[]};
+    [].slice.call(doc.querySelectorAll('#sc-skills-grid > div')).forEach(function(c){
+      var h=c.querySelector('h3'),p=c.querySelector('p');
+      skills.cards.push({title:h?h.textContent.trim():'',desc:p?p.textContent.replace(/\s+/g,' ').trim():''});
+    });
+    [].slice.call(doc.querySelectorAll('#sc-toolkit-grid > div')).forEach(function(c){
+      var s=c.querySelector('span'),im=c.querySelector('img');
+      skills.tools.push({name:s?s.textContent.trim():'',icon:im?im.getAttribute('src'):''});
+    });
+
+    /* projects section */
+    var projectsSection={eyebrow:t('#sc-proj-eyebrow'),heading:t('#sc-proj-head'),subtitle:ta('#sc-proj-sub')};
+
+    /* contact */
+    var contact={heading:t('#sc-contact-head'),items:[]};
+    [].slice.call(doc.querySelectorAll('#sc-contact-list .ct-item')).forEach(function(a){
+      var href=a.getAttribute('href')||'',sm=a.querySelector('small'),
+          label=sm?sm.textContent.trim():'',sp=a.querySelector('span'),
+          value=sp?sp.textContent.replace(label,'').trim():'';
+      var type='other';
+      if(!href)type='location';
+      else if(/^mailto:/i.test(href))type='email';
+      else if(/linkedin\./i.test(href))type='linkedin';
+      else if(/github\./i.test(href))type='github';
+      else if(/instagram\./i.test(href))type='instagram';
+      else if(/wa\.me|whatsapp/i.test(href))type='whatsapp';
+      else if(/^tel:/i.test(href))type='phone';
+      else type='website';
+      contact.items.push({label:label,value:value,href:href,type:type});
+    });
+
+    /* settings */
+    var title=doc.querySelector('title'),meta=doc.querySelector('meta[name="description"]');
+    var settings={
+      siteTitle:title?title.textContent.trim():'',metaDescription:meta?meta.getAttribute('content')||'':'',
+      brand:t('#sc-brand'),footerBlurb:t('#sc-foot-blurb'),copyright:t('#sc-copy')
+    };
+
+    b.textContent='Saving…';
+    var all=[['profile',profile],['about',about],['education',edu],['skills',skills],['projects',projectsSection],['contact',contact],['settings',settings]];
+    for(var i=0;i<all.length;i++){
+      var r=await sb.from('site_content').upsert({key:all[i][0],value:all[i][1],updated_at:new Date().toISOString()});
+      if(r.error)throw r.error;
+    }
+    toast('Website content database me save ho gaya');
+    await loadContent();
+  }catch(ex){toast(nice(ex),true)}
+  b.disabled=false;b.textContent='Load website content into the database';
+});
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
 async function loadDashboard(){
   var pr=await sb.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
   var mr=await sb.from('messages').select('id,name,email,created_at').order('created_at',{ascending:false}).limit(5);
@@ -367,6 +906,9 @@ async function loadDashboard(){
   var box=$('#dashboardStats');box.replaceChildren();
   box.appendChild(statCard('Total Projects',cr.count||0,'Projects'));
   box.appendChild(statCard('Total Messages',mr2.count||0,'Messages'));
+  var saved=KEYS.filter(function(k){return content[k]&&Object.keys(content[k]).length}).length;
+  box.appendChild(statCard('Website Sections',saved+' / '+KEYS.length,'Content saved'));
+  box.appendChild(statCard('Setup',setupBroken?'Pending':'Ready',setupBroken?'Run setup.sql':'site_content table'));
   var rp=$('#recentProj');rp.replaceChildren();
   var proj=pr.data||[];
   if(!proj.length){rp.appendChild(el('p','empty','No projects yet.'))}
@@ -384,7 +926,9 @@ function recentItem(title,sub){
   var d=el('div','msg');d.appendChild(el('b',null,title));d.appendChild(el('span',null,sub));return d;
 }
 
-/* ---------- messages ---------- */
+/* =========================================================
+   MESSAGES
+========================================================= */
 async function loadMessages(){
   var r=await sb.from('messages').select('*').order('created_at',{ascending:false});
   var box=$('#msgList');box.replaceChildren();
