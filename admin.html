@@ -83,7 +83,9 @@ dialog h2{font-size:26px}
 .err{color:var(--bad);font-size:14px;min-height:20px}
 /* dashboard */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
-.hero{background:linear-gradient(135deg,#a8541f,#e0864f);color:#fff;padding:32px;border-radius:20px;margin-bottom:26px}
+.hero{background:linear-gradient(135deg,#a8541f,#e0864f);color:#fff;padding:32px;border-radius:20px;margin-bottom:26px;display:flex;align-items:center;gap:24px}
+.hero .dash-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.4);flex:0 0 auto;background:rgba(255,255,255,.15)}
+.hero .hero-text{flex:1;min-width:0}
 .hero h1{margin:0 0 8px;font-size:28px}
 .hero p{margin:0;opacity:.95;font-size:16px}
 .stat{background:var(--card);border:1px solid var(--line);padding:20px;display:flex;align-items:center;gap:16px}
@@ -169,7 +171,7 @@ dialog h2{font-size:26px}
 </div>
 
 <div id="tab-dashboard">
-<div class="hero"><h1>Welcome back, <span id="dashWho"></span></h1><p>Poori website ki information yahin se manage karein — koi bhi badlav karein aur Save dabayen.</p></div>
+<div class="hero"><img id="dashPhoto" class="dash-photo" alt="" style="display:none"><div class="hero-text"><h1>Welcome back, <span id="dashName">Admin</span></h1><p>Poori website ki information yahin se manage karein — koi bhi badlav karein aur Save dabayen.</p></div></div>
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
 <div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
@@ -437,6 +439,14 @@ function enter(session){
   $('#dashWho').textContent=session.user.email;
   if(!entered){entered=true;loadContent();loadDashboard()}
 }
+function updateDashHero(){
+  var p=content.profile||{};
+  var name=((p.firstName||'')+' '+(p.lastName||'')).trim();
+  $('#dashName').textContent=name||'Admin';
+  var ph=$('#dashPhoto');
+  if(p.heroPhoto&&/^https?:\/\//i.test(p.heroPhoto)){ph.src=p.heroPhoto;ph.style.display='block'}
+  else{ph.style.display='none'}
+}
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#who').hidden=true}
 
 /* ---------- tabs ---------- */
@@ -468,6 +478,7 @@ async function loadContent(){
   setupBroken=false;$('#setupWarn').hidden=true;
   (r.data||[]).forEach(function(row){content[row.key]=row.value||{}});
   fillAll();
+  updateDashHero();
   if(!$('#tab-dashboard').hidden)loadDashboard();
 }
 $('#retrySetup').addEventListener('click',function(){location.reload()});
