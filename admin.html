@@ -489,6 +489,7 @@ var SETUP_SQL=[
 'drop policy if exists "admin all site_content" on public.site_content;',
 'create policy "admin all site_content" on public.site_content for all to authenticated using (true) with check (true);',
 'grant select on table public.projects to anon;',
+'grant select, insert, update, delete on table public.projects to authenticated;',
 'alter table public.projects enable row level security;',
 'drop policy if exists "public read projects" on public.projects;',
 'create policy "public read projects" on public.projects for select to anon using (true);',

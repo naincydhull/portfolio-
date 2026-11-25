@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Setup — ek baar</title>
+<style>
+  :root{--ink:#0f172a;--mut:#5b6478;--line:#e3e7ef;--brand:#2563eb;--ok:#15803d}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);
+       background:linear-gradient(160deg,#eef4ff 0%,#f8fafc 45%,#eefaf3 100%);min-height:100vh;
+       display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;max-width:640px;width:100%;
+        padding:30px 28px;box-shadow:0 18px 50px rgba(15,23,42,.09)}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--mut);margin:0 0 22px;font-size:15px}
+  .step{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line)}
+  .num{flex:0 0 30px;height:30px;border-radius:50%;background:#e8efff;color:var(--brand);
+       font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .step h2{font-size:15.5px;margin:2px 0 3px}
+  .step p{margin:0;color:var(--mut);font-size:14px}
+  .btn{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;
+       padding:11px 18px;border-radius:10px;border:0;font-size:15px;cursor:pointer;margin-top:10px}
+  .btn:hover{filter:brightness(1.07)}
+  .ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:600;
+         padding:10px 16px;border-radius:10px;cursor:pointer;font-size:14px;margin-top:10px}
+  .done{color:var(--ok);font-weight:600}
+  #msg{font-size:14px;margin-top:10px;min-height:20px}
+  code{background:#f1f5f9;border-radius:6px;padding:1px 6px;font-size:13.5px}
+  .foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Ek baar ka setup</h1>
+  <p class="sub">Supabase me <code>site_content</code> table banani hai — bas 3 step. Uske baad admin panel ka warning hamesha ke liye chala jayega.</p>
+
+  <div class="step">
+    <div class="num">1</div>
+    <div>
+      <h2>Supabase SQL Editor kholen</h2>
+      <p>Neeche wale button se SQL Editor khulega — SQL pehle se bhara hua hoga.</p>
+      <a class="btn" id="openEditor" href="https://supabase.com/dashboard/project/jgieoxivnciypxxlnzuj/sql/new" target="_blank" rel="noopener">Supabase SQL Editor kholen</a>
+      <button class="ghost" id="copySql" type="button">Ya SQL copy karein</button>
+      <div id="msg"></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">2</div>
+    <div>
+      <h2>Run dabayen</h2>
+      <p>SQL Editor me <b>Run</b> (ya Ctrl+Enter) dabayen. Success message aayega.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">3</div>
+    <div>
+      <h2>Admin panel wapas kholein</h2>
+      <p>Warning hat jayegi aur saari website information save hone lagegi.</p>
+      <a class="btn" href="admin.html" style="background:var(--ok)">Admin panel kholein</a>
+    </div>
+  </div>
+
+  <div class="foot">Ye page sirf ek baar ka setup hai. Baad me iski zarurat nahi padegi.</div>
+</div>
+
+<script>
+var SETUP_SQL = `-- ============================================================
+--  Naincy Portfolio — Supabase setup
+--  Run this ONCE:
+--    Supabase Dashboard -> SQL Editor -> New query -> paste -> Run
+--  Safe to run again (it does not delete anything).
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- 1) Table that holds ALL website information
+--    (profile / hero, about, education, skills, contact, settings)
+--    key = section name, value = the JSON data of that section
+-- ------------------------------------------------------------
+create table if not exists public.site_content (
+  key        text primary key,
+  value      jsonb   not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+grant usage on schema public to anon, authenticated;
+grant select on table public.site_content to anon;
+grant select, insert, update, delete on table public.site_content to authenticated;
+
+alter table public.site_content enable row level security;
+
+-- website visitors can read it
+drop policy if exists "public read site_content" on public.site_content;
+create policy "public read site_content"
+  on public.site_content for select
+  to anon
+  using (true);
+
+-- the logged-in admin can do everything
+drop policy if exists "admin all site_content" on public.site_content;
+create policy "admin all site_content"
+  on public.site_content for all
+  to authenticated
+  using (true) with check (true);
+
+-- ------------------------------------------------------------
+-- 2) FIX: the website could not read the projects table
+--    (error: permission denied for table projects)
+-- ------------------------------------------------------------
+grant select on table public.projects to anon;
+alter table public.projects enable row level security;
+
+drop policy if exists "public read projects" on public.projects;
+create policy "public read projects"
+  on public.projects for select
+  to anon
+  using (true);
+
+-- admin (logged in) can manage projects
+drop policy if exists "admin all projects" on public.projects;
+create policy "admin all projects"
+  on public.projects for all
+  to authenticated
+  using (true) with check (true);
+
+-- ------------------------------------------------------------
+-- 3) FIX: website visitors must be able to send contact messages
+-- ------------------------------------------------------------
+grant insert on table public.messages to anon;
+grant select, delete on table public.messages to authenticated;
+alter table public.messages enable row level security;
+
+drop policy if exists "public send messages" on public.messages;
+create policy "public send messages"
+  on public.messages for insert
+  to anon
+  with check (true);
+
+drop policy if exists "admin read messages" on public.messages;
+create policy "admin read messages"
+  on public.messages for select
+  to authenticated
+  using (true);
+
+drop policy if exists "admin delete messages" on public.messages;
+create policy "admin delete messages"
+  on public.messages for delete
+  to authenticated
+  using (true);
+
+-- ------------------------------------------------------------
+-- Done. Quick check (optional):
+--   select key, updated_at from public.site_content;
+-- ------------------------------------------------------------
+`;
+var PROJECT = 'jgieoxivnciypxxlnzuj';
+document.getElementById('openEditor').href =
+  'https://supabase.com/dashboard/project/' + PROJECT + '/sql/new?content=' + encodeURIComponent(SETUP_SQL);
+
+document.getElementById('copySql').addEventListener('click', function () {
+  var msg = document.getElementById('msg');
+  function ok(){ msg.textContent = 'SQL copy ho gaya — Supabase SQL Editor me paste karke Run dabayen.'; msg.style.color = '#15803d'; }
+  function fallback(){
+    var t = document.createElement('textarea');
+    t.value = SETUP_SQL; t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select();
+    try { document.execCommand('copy'); ok(); }
+    catch (e) { msg.textContent = 'Copy nahi hua — page par select karke copy karein.'; msg.style.color = '#b3261e'; }
+    document.body.removeChild(t);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(SETUP_SQL).then(ok, fallback);
+  else fallback();
+});
+</script>
+</body>
+</html>

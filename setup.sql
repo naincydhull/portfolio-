@@ -41,6 +41,7 @@ create policy "admin all site_content"
 --    (error: permission denied for table projects)
 -- ------------------------------------------------------------
 grant select on table public.projects to anon;
+grant select, insert, update, delete on table public.projects to authenticated;
 alter table public.projects enable row level security;
 
 drop policy if exists "public read projects" on public.projects;
