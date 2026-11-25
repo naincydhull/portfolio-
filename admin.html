@@ -160,7 +160,12 @@ dialog h2{font-size:26px}
 <li>Repo ki <code>setup.sql</code> file ka poora content paste karein → <b>Run</b> dabayen</li>
 <li>Phir yahan <b>Reload</b> karein</li>
 </ol>
-<p style="margin:10px 0 0"><button class="ghost small" id="retrySetup">Reload</button></p>
+<p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap">
+<a class="btn small" id="openSqlEditor" href="https://supabase.com/dashboard/project/jgieoxivnciypxxlnzuj/sql/new" target="_blank" rel="noopener">Supabase SQL Editor kholen</a>
+<button class="ghost small" id="copySetupSql">SQL copy karein</button>
+<button class="ghost small" id="retrySetup">Reload</button>
+</p>
+<p style="margin:8px 0 0;font-size:13px;opacity:.8">Tarika: <b>SQL copy karein</b> dabayen → Supabase me <b>paste</b> karein → <b>Run</b> dabayen → yahan <b>Reload</b> karein. Bas ek baar karna hai.</p>
 </div>
 
 <div id="tab-dashboard">
@@ -466,6 +471,56 @@ async function loadContent(){
   if(!$('#tab-dashboard').hidden)loadDashboard();
 }
 $('#retrySetup').addEventListener('click',function(){location.reload()});
+
+/* ---------- setup helper: copy SQL / open prefilled SQL editor ---------- */
+var SETUP_SQL=[
+'-- Naincy Portfolio — Supabase setup (ek baar run karein)',
+'create table if not exists public.site_content (',
+'  key        text primary key,',
+'  value      jsonb   not null default \'{}\'::jsonb,',
+'  updated_at timestamptz not null default now()',
+');',
+'grant usage on schema public to anon, authenticated;',
+'grant select on table public.site_content to anon;',
+'grant select, insert, update, delete on table public.site_content to authenticated;',
+'alter table public.site_content enable row level security;',
+'drop policy if exists "public read site_content" on public.site_content;',
+'create policy "public read site_content" on public.site_content for select to anon using (true);',
+'drop policy if exists "admin all site_content" on public.site_content;',
+'create policy "admin all site_content" on public.site_content for all to authenticated using (true) with check (true);',
+'grant select on table public.projects to anon;',
+'alter table public.projects enable row level security;',
+'drop policy if exists "public read projects" on public.projects;',
+'create policy "public read projects" on public.projects for select to anon using (true);',
+'drop policy if exists "admin all projects" on public.projects;',
+'create policy "admin all projects" on public.projects for all to authenticated using (true) with check (true);',
+'grant insert on table public.messages to anon;',
+'grant select, delete on table public.messages to authenticated;',
+'alter table public.messages enable row level security;',
+'drop policy if exists "public send messages" on public.messages;',
+'create policy "public send messages" on public.messages for insert to anon with check (true);',
+'drop policy if exists "admin read messages" on public.messages;',
+'create policy "admin read messages" on public.messages for select to authenticated using (true);',
+'drop policy if exists "admin delete messages" on public.messages;',
+'create policy "admin delete messages" on public.messages for delete to authenticated using (true);'
+].join('\n');
+(function(){
+  var a=$('#openSqlEditor');
+  if(a)a.href='https://supabase.com/dashboard/project/jgieoxivnciypxxlnzuj/sql/new?content='+encodeURIComponent(SETUP_SQL);
+  var c=$('#copySetupSql');
+  if(!c)return;
+  c.addEventListener('click',function(){
+    function ok(){toast('SQL copy ho gaya — Supabase me paste karke Run dabayen')}
+    function fallback(){
+      var t=document.createElement('textarea');t.value=SETUP_SQL;t.style.position='fixed';t.style.opacity='0';
+      document.body.appendChild(t);t.select();
+      try{document.execCommand('copy');ok()}catch(e){toast('Copy nahi hua — manually select karke copy karein',true)}
+      document.body.removeChild(t);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(SETUP_SQL).then(ok,fallback);
+    else fallback();
+  });
+})();
 
 async function saveContent(key,value,btn){
   if(setupBroken){toast('Pehle setup.sql run karein.',true);return false}
