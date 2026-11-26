@@ -99,8 +99,22 @@ dialog h2{font-size:26px}
 .hero .dash-ctas a,.hero .dash-ctas button{padding:11px 20px;font-size:14px;text-decoration:none;font-family:inherit}
 .hero .dash-ctas .a{background:#a8541f;color:#fff}
 .hero .dash-ctas .b{border:1px solid #cbb99f;background:#fbf7ef;color:var(--ink)}
-.hero .editable{cursor:pointer}
-.hero .editable:hover{outline:1px dashed #c8782f;outline-offset:4px;border-radius:3px}
+.hero .editable,.about-preview .editable{cursor:pointer}
+.hero .editable:hover,.about-preview .editable:hover{outline:1px dashed #c8782f;outline-offset:4px;border-radius:3px}
+/* About preview — same look as the portfolio About section */
+.about-preview{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 28px;margin-bottom:24px;position:relative;overflow:hidden}
+.about-preview .ab-eyebrow{font-size:14px;letter-spacing:2px;color:#a8541f}
+.about-preview .ab-head{display:inline-block;margin:10px 0 0;font-family:'Playfair Display',Georgia,serif;font-size:clamp(30px,3.4vw,42px);color:#5a3418;border-bottom:4px solid #c8782f;padding-bottom:6px;width:fit-content}
+.about-preview .ab-grid{display:flex;flex-wrap:wrap;gap:32px;margin-top:28px;align-items:flex-start}
+.about-preview .ab-photo-col{flex:0 0 clamp(180px,32%,260px);position:relative;padding-bottom:28px}
+.about-preview .ab-photo-wrap{background:#efe4d2;padding:6px}
+.about-preview .ab-photo{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 12%}
+.about-preview .ab-badge{position:absolute;left:0;bottom:0;background:#a8541f;color:#fff;padding:12px 16px;font-size:14px;box-shadow:0 10px 24px rgba(74,63,56,.25)}
+.about-preview .ab-copy{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.about-preview .ab-copy p{margin:0;font-size:15px;line-height:1.8;color:#5a4d44}
+.about-preview .ab-cards{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+.about-preview .ab-card{background:#f0e6d6;border-radius:14px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;color:#2b211b;font-size:14.5px;line-height:1.55}
+.about-preview .ab-card i{flex:0 0 16px;width:16px;height:16px;border-radius:50%;background:#c8782f;margin-top:4px}
 .hero .photo-frame{position:relative;flex:0 0 180px;width:180px;box-sizing:border-box;padding:6px;border:2px solid #a59d8e;border-radius:22px;background:#f4ece0;box-shadow:0 18px 36px rgba(74,63,56,.2);z-index:1}
 .hero .photo-frame::after{content:"";position:absolute;inset:-5px;border:1px solid #d9a46f;border-radius:26px;pointer-events:none}
 .hero .dash-photo{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:14px;background:#f4ece0}
@@ -256,8 +270,23 @@ dialog h2{font-size:26px}
 
 <!-- ============ ABOUT ============ -->
 <div id="tab-about" hidden>
+<div class="about-preview">
+<span class="ab-eyebrow editable" id="abEyebrow" data-edit="#a_eyebrow" title="Click to edit">Introduction</span>
+<h2 class="ab-head editable" id="abHead" data-edit="#a_head" title="Click to edit">About Me</h2>
+<div class="ab-grid">
+<div class="ab-photo-col">
+<div class="ab-photo-wrap"><img id="abPhoto" class="ab-photo editable" src="images/about-photo.webp" alt="Naincy Dhull, digital marketer from Kaithal, Haryana" data-edit="#a_photoFile" title="Click to change photo"></div>
+<div class="ab-badge editable" id="abBadge" data-edit="#p_badge" title="Click to edit">Digital Marketing with AI</div>
+</div>
+<div class="ab-copy">
+<p class="editable" id="abP1" data-edit="#a_p1" title="Click to edit">Hi, I'm Naincy Dhull — I'm from Kaithal, Haryana. I'm a tech lover who enjoys learning new things and building them myself — websites, small apps, useful tools, and digital marketing that actually grows businesses.</p>
+<p class="editable" id="abP2" data-edit="#a_p2" title="Click to edit">I did my 10th with 79% marks in 2024 and my 12th with 71% in 2026. At the same time, I learned real-world skills — AI tools, web development, digital marketing, content creation and social media management.</p>
+<div class="ab-cards" id="abCards"></div>
+</div>
+</div>
+</div>
 <div class="bar"><h2>About</h2><button type="button" class="saveTab" data-key="about">Save changes</button></div>
-<p class="hint" style="margin-top:-8px">"About Me" section — paragraphs, cards aur photo.</p>
+<p class="hint" style="margin-top:-8px">Upar wala preview bilkul website jaisa hai — kisi bhi text, card ya photo par click karke niche wala field direct edit kar sakti hain.</p>
 <form class="tabform" id="form-about" onsubmit="return false">
 <div class="fieldset">
 <div class="grid2">
@@ -488,13 +517,40 @@ function updateDashHero(){
   if(remote){tph.src=remote;tph.style.display='block'}
   else{tph.style.display='none'}
 }
+var ABOUT_DEFAULT={
+  p1:"Hi, I'm Naincy Dhull — I'm from Kaithal, Haryana. I'm a tech lover who enjoys learning new things and building them myself — websites, small apps, useful tools, and digital marketing that actually grows businesses.",
+  p2:'I did my 10th with 79% marks in 2024 and my 12th with 71% in 2026. At the same time, I learned real-world skills — AI tools, web development, digital marketing, content creation and social media management.',
+  cards:[
+    {title:'Tech & AI Skills',text:'website & app development, AI tools and useful tool building.'},
+    {title:'Digital Marketing & SEO',text:'SEO basics, content and social strategy to help businesses grow online.'},
+    {title:'Social Media',text:'content creation and social media management for small businesses.'}
+  ]
+};
+function updateAboutPreview(){
+  var a=content.about||{},p=content.profile||{};
+  $('#abEyebrow').textContent=a.eyebrow||'Introduction';
+  $('#abHead').textContent=a.heading||'About Me';
+  $('#abP1').textContent=a.p1||ABOUT_DEFAULT.p1;
+  $('#abP2').textContent=a.p2||ABOUT_DEFAULT.p2;
+  $('#abBadge').textContent=p.badge||'Digital Marketing with AI';
+  $('#abPhoto').src=(a.photo&&/^https?:\/\//i.test(a.photo))?a.photo:'images/about-photo.webp';
+  var cards=(a.cards&&a.cards.length)?a.cards:ABOUT_DEFAULT.cards;
+  var box=$('#abCards');box.replaceChildren();
+  cards.forEach(function(c,k){
+    var d=el('div','ab-card editable');d.setAttribute('data-card',String(k));d.title='Click to edit';
+    d.appendChild(el('i'));
+    var t=el('div'),title=c.title||'',text=c.text||'';
+    if(title)t.appendChild(el('b',null,title));
+    if(text)t.appendChild(document.createTextNode((title?' — ':'')+text));
+    d.appendChild(t);box.appendChild(d);
+  });
+}
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#topName').textContent='';$('#topPhoto').style.display='none'}
 
-/* Profile / Hero ka upar wala preview — kisi bhi text/photo par click karke
-   niche ka related field direct edit kar sakte hain. */
-function openHeroField(sel){
-  if($('#tab-profile').hidden){
-    var nav=document.querySelector('.side nav a[data-tab="profile"]');
+/* Preview par kisi bhi text/photo par click karke niche ka field direct edit karein. */
+function focusEdit(sel,tabId){
+  if(tabId&&$(tabId).hidden){
+    var nav=document.querySelector('.side nav a[data-tab="'+tabId.replace('#tab-','')+'"]');
     if(nav)nav.click();
   }
   setTimeout(function(){
@@ -504,7 +560,33 @@ function openHeroField(sel){
     if(f.select)f.select();
   },80);
 }
+function openHeroField(sel){focusEdit(sel,'#tab-profile')}
 $$('.hero .editable').forEach(function(e){e.addEventListener('click',function(){openHeroField(e.getAttribute('data-edit'))})});
+function focusAboutCard(k){
+  if($('#tab-about').hidden){
+    var nav=document.querySelector('.side nav a[data-tab="about"]');
+    if(nav)nav.click();
+  }
+  setTimeout(function(){
+    var rows=$$('#aboutCards .lrow');
+    if(!rows.length){
+      fillList('#aboutCards',ABOUT_DEFAULT.cards,[{k:'title',l:'Title'},{k:'text',l:'Text',t:'textarea'}],{title:'',text:''});
+      rows=$$('#aboutCards .lrow');
+    }
+    var row=rows[k]||rows[0];
+    var f=row&&row.querySelector('input,textarea');
+    if(f){f.focus();if(f.scrollIntoView)f.scrollIntoView({block:'center',behavior:'smooth'})}
+  },80);
+}
+$$('.about-preview .editable').forEach(function(e){e.addEventListener('click',function(){
+  var sel=e.getAttribute('data-edit');
+  focusEdit(sel,sel==='#p_badge'?'#tab-profile':'#tab-about');
+})});
+/* Cards baad me bante hain, isliye container par delegation. */
+$('#abCards').addEventListener('click',function(e){
+  var d=e.target.closest('.ab-card');if(!d)return;
+  focusAboutCard(parseInt(d.getAttribute('data-card'),10));
+});
 
 /* ---------- tabs ---------- */
 $$('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
@@ -523,6 +605,7 @@ $$('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
 var KEYS=['profile','about','education','skills','projects','contact','settings'];
 var content={};
 KEYS.forEach(function(k){content[k]={}});
+updateAboutPreview();
 var setupBroken=false;
 
 async function loadContent(){
@@ -598,6 +681,8 @@ async function saveContent(key,value,btn){
   var r=await sb.from('site_content').upsert({key:key,value:value,updated_at:new Date().toISOString()});
   if(btn){btn.disabled=false;btn.textContent=old}
   if(r.error){toast(nice(r.error),true);return false}
+  if(key==='profile')updateDashHero();
+  if(key==='profile'||key==='about')updateAboutPreview();
   toast('Saved — website par refresh karke dekhein');
   return true;
 }
@@ -730,6 +815,7 @@ function fillAll(){
   setVal('#a_p1',a.p1);setVal('#a_p2',a.p2);
   setVal('#a_photoUrl',a.photo||'');aboutPhoto.draw();
   fillList('#aboutCards',a.cards,F.aboutCards,{title:'',text:''});
+  updateAboutPreview();
 
   var e=content.education||{};
   setVal('#e_eyebrow',e.eyebrow);setVal('#e_head',e.heading);
