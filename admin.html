@@ -192,6 +192,13 @@ dialog h2{font-size:26px}
 </div>
 
 <div id="tab-dashboard">
+<div class="stats" id="dashboardStats"></div>
+<div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
+<div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
+</div>
+
+<!-- ============ PROFILE / HERO ============ -->
+<div id="tab-profile" hidden>
 <div class="hero">
 <div class="hero-text">
 <span class="hi editable" id="dashEyebrow" data-edit="#p_eyebrow" title="Click to edit">Portfolio</span>
@@ -202,15 +209,8 @@ dialog h2{font-size:26px}
 </div>
 <div class="photo-frame editable" data-edit="#p_heroFile" title="Click to change photo"><img id="dashPhoto" class="dash-photo" alt="Naincy Dhull, digital marketer from Kaithal" style="display:none"></div>
 </div>
-<div class="stats" id="dashboardStats"></div>
-<div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
-<div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
-</div>
-
-<!-- ============ PROFILE / HERO ============ -->
-<div id="tab-profile" hidden>
 <div class="bar"><h2>Profile / Hero</h2><button type="button" class="saveTab" data-key="profile">Save changes</button></div>
-<p class="hint" style="margin-top:-8px">Website ka sabse upar wala (hero) hissa. Dashboard wale hero par kisi bhi text ya photo par click karke aap yahin directly edit kar sakti hain. Save karne ke baad website par refresh karke dekhein.</p>
+<p class="hint" style="margin-top:-8px">Upar wala hero bilkul website jaisa preview hai — kisi bhi text ya photo par click karke niche wala field direct edit kar sakti hain. Save karne ke baad website par refresh karke dekhein.</p>
 <form class="tabform" id="form-profile" onsubmit="return false">
 <div class="fieldset">
 <h3>Heading</h3><span class="hint">Upar chhoti line, naam aur tagline.</span>
@@ -491,11 +491,13 @@ function updateDashHero(){
 }
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#topName').textContent='';$('#topPhoto').style.display='none'}
 
-/* Dashboard hero ek preview ki tarah hai — kisi bhi text/photo par click karke
-   Profile / Hero tab ka related field direct edit kar sakte hain. */
+/* Profile / Hero ka upar wala preview — kisi bhi text/photo par click karke
+   niche ka related field direct edit kar sakte hain. */
 function openHeroField(sel){
-  var nav=document.querySelector('.side nav a[data-tab="profile"]');
-  if(nav)nav.click();
+  if($('#tab-profile').hidden){
+    var nav=document.querySelector('.side nav a[data-tab="profile"]');
+    if(nav)nav.click();
+  }
   setTimeout(function(){
     var f=$(sel);if(!f)return;
     f.focus();
