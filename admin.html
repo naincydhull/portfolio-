@@ -207,7 +207,7 @@ dialog h2{font-size:26px}
 <p class="dash-intro editable" id="dashIntro" data-edit="#p_intro" title="Click to edit">I build websites and small products with AI-assisted development, and help businesses grow online through digital marketing.</p>
 <div class="dash-ctas"><button type="button" class="a editable" id="dashCta1" data-edit="#p_cta1" title="Click to edit">View Projects</button><button type="button" class="b editable" id="dashCta2" data-edit="#p_cta2" title="Click to edit">Contact Me</button></div>
 </div>
-<div class="photo-frame editable" data-edit="#p_heroFile" title="Click to change photo"><img id="dashPhoto" class="dash-photo" alt="Naincy Dhull, digital marketer from Kaithal" style="display:none"></div>
+<div class="photo-frame editable" data-edit="#p_heroFile" title="Click to change photo"><img id="dashPhoto" class="dash-photo" src="images/hero-photo.webp" alt="Naincy Dhull, digital marketer from Kaithal"></div>
 </div>
 <div class="bar"><h2>Profile / Hero</h2><button type="button" class="saveTab" data-key="profile">Save changes</button></div>
 <p class="hint" style="margin-top:-8px">Upar wala hero bilkul website jaisa preview hai — kisi bhi text ya photo par click karke niche wala field direct edit kar sakti hain. Save karne ke baad website par refresh karke dekhein.</p>
@@ -482,12 +482,11 @@ function updateDashHero(){
   heroText('#dashCta1',p.cta1,'View Projects');
   heroText('#dashCta2',p.cta2,'Contact Me');
   var ph=$('#dashPhoto'),tph=$('#topPhoto');
-  if(p.heroPhoto&&/^https?:\/\//i.test(p.heroPhoto)){
-    ph.src=p.heroPhoto;ph.style.display='block';
-    tph.src=p.heroPhoto;tph.style.display='block';
-  }else{
-    ph.style.display='none';tph.style.display='none';
-  }
+  var remote=(p.heroPhoto&&/^https?:\/\//i.test(p.heroPhoto))?p.heroPhoto:'';
+  /* Supabase me photo na ho to website ki apni hero photo dikhayein. */
+  ph.src=remote||'images/hero-photo.webp';ph.style.display='block';
+  if(remote){tph.src=remote;tph.style.display='block'}
+  else{tph.style.display='none'}
 }
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#topName').textContent='';$('#topPhoto').style.display='none'}
 
