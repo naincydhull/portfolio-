@@ -83,6 +83,25 @@ create policy "admin delete messages"
   using (true);
 
 -- ------------------------------------------------------------
+-- 4) Project screenshots storage bucket (upload + public read)
+-- ------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('project-images', 'project-images', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "public read project images" on storage.objects;
+create policy "public read project images"
+  on storage.objects for select
+  to anon, authenticated
+  using (bucket_id = 'project-images');
+
+drop policy if exists "admin manage project images" on storage.objects;
+create policy "admin manage project images"
+  on storage.objects for all
+  to authenticated
+  using (bucket_id = 'project-images') with check (bucket_id = 'project-images');
+
+-- ------------------------------------------------------------
 -- Done. Quick check (optional):
 --   select key, updated_at from public.site_content;
 -- ------------------------------------------------------------

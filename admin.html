@@ -254,6 +254,16 @@ dialog h2{font-size:26px}
 <p style="margin:8px 0 0;font-size:13px;opacity:.8">Tarika: <b>SQL copy karein</b> dabayen → Supabase me <b>paste</b> karein → <b>Run</b> dabayen → yahan <b>Reload</b> karein. Bas ek baar karna hai.</p>
 </div>
 
+<div class="banner" id="permWarn" hidden>
+<h3>Projects par 403 — permission denied</h3>
+<p style="margin:6px 0 0;font-size:14.5px">Ye code ka error nahi hai. Supabase me <code>projects</code> table aur image bucket ki permission ek baar set karni hogi. Neeche button se SQL khul kar ready hoga, bas <b>Run</b> dabayen.</p>
+<p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap">
+<a class="btn small" id="fix403Admin" href="#" target="_blank" rel="noopener" style="background:#b3261e">403 fix SQL kholein</a>
+<button class="ghost small" id="copyFixSql">Fix SQL copy karein</button>
+<button class="ghost small" id="retryPerm">Reload</button>
+</p>
+</div>
+
 <div id="tab-dashboard">
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
@@ -871,7 +881,14 @@ updateAboutPreview();
 updateEducationPreview();
 updateSkillsPreview();
 updateProjectsPreview();
-var setupBroken=false;
+var setupBroken=false,projectsBlocked=false;
+function is403(err){return !!err&&(err.status===403||err.code==='403'||/403|permission denied/i.test(String(err.message||err)))}
+function showProjectPerm(err){
+  if(!is403(err))return false;
+  projectsBlocked=true;
+  if($('#permWarn'))$('#permWarn').hidden=false;
+  return true;
+}
 
 async function loadContent(){
   var r=await sb.from('site_content').select('*');
@@ -945,7 +962,12 @@ var SETUP_SQL=[
 'drop policy if exists "admin read messages" on public.messages;',
 'create policy "admin read messages" on public.messages for select to authenticated using (true);',
 'drop policy if exists "admin delete messages" on public.messages;',
-'create policy "admin delete messages" on public.messages for delete to authenticated using (true);'
+'create policy "admin delete messages" on public.messages for delete to authenticated using (true);',
+'insert into storage.buckets (id, name, public) values (\'project-images\', \'project-images\', true) on conflict (id) do update set public = true;',
+'drop policy if exists "public read project images" on storage.objects;',
+'create policy "public read project images" on storage.objects for select to anon, authenticated using (bucket_id = \'project-images\');',
+'drop policy if exists "admin manage project images" on storage.objects;',
+'create policy "admin manage project images" on storage.objects for all to authenticated using (bucket_id = \'project-images\') with check (bucket_id = \'project-images\');'
 ].join('\n');
 (function(){
   var a=$('#openSqlEditor');
@@ -964,6 +986,38 @@ var SETUP_SQL=[
     else fallback();
   });
 })();
+/* Projects 403 ka one-time fix — direct SQL editor me ready karke deta hai. */
+var FIX_SQL=[
+'-- ADMIN 403 FIX — Run once in Supabase SQL Editor (safe to re-run)',
+'grant usage on schema public to anon, authenticated;',
+'grant select on table public.projects to anon;',
+'grant select, insert, update, delete on table public.projects to authenticated;',
+'alter table public.projects enable row level security;',
+'drop policy if exists "public read projects" on public.projects;',
+'create policy "public read projects" on public.projects for select to anon using (true);',
+'drop policy if exists "admin all projects" on public.projects;',
+'create policy "admin all projects" on public.projects for all to authenticated using (true) with check (true);',
+'insert into storage.buckets (id, name, public) values (\'project-images\', \'project-images\', true) on conflict (id) do update set public = true;',
+'drop policy if exists "public read project images" on storage.objects;',
+'create policy "public read project images" on storage.objects for select to anon, authenticated using (bucket_id = \'project-images\');',
+'drop policy if exists "admin manage project images" on storage.objects;',
+'create policy "admin manage project images" on storage.objects for all to authenticated using (bucket_id = \'project-images\') with check (bucket_id = \'project-images\');'
+].join('\n');
+var editorBase='https://supabase.com/dashboard/project/jgieoxivnciypxxlnzuj/sql/new?content=';
+var fixLink=$('#fix403Admin');if(fixLink)fixLink.href=editorBase+encodeURIComponent(FIX_SQL);
+var copyFix=$('#copyFixSql');
+if(copyFix)copyFix.addEventListener('click',function(){
+  function ok(){toast('Fix SQL copy ho gaya — Supabase me paste karke Run dabayen')}
+  function fallback(){
+    var t=document.createElement('textarea');t.value=FIX_SQL;t.style.position='fixed';t.style.opacity='0';
+    document.body.appendChild(t);t.select();
+    try{document.execCommand('copy');ok()}catch(e){toast('Copy nahi hua — manually select karke copy karein',true)}
+    document.body.removeChild(t);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(FIX_SQL).then(ok,fallback);
+  else fallback();
+});
+var retryPerm=$('#retryPerm');if(retryPerm)retryPerm.addEventListener('click',function(){location.reload()});
 
 async function saveContent(key,value,btn){
   if(setupBroken){toast('Pehle setup.sql run karein.',true);return false}
@@ -1177,9 +1231,14 @@ $$('.saveTab').forEach(function(btn){
 ========================================================= */
 var projects=[];
 async function loadProjects(){
-  var r=await sb.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
   var box=$('#projList');box.replaceChildren();
-  if(r.error){box.appendChild(el('p','empty','Could not load projects: '+nice(r.error)));return}
+  if(projectsBlocked){box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));return}
+  var r=await sb.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
+  if(r.error){
+    if(showProjectPerm(r.error))box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));
+    else box.appendChild(el('p','empty','Could not load projects: '+nice(r.error)));
+    return;
+  }
   projects=r.data||[];
   $('#importBtn').hidden=projects.length>0;
   updateProjectsPreview();
@@ -1280,7 +1339,7 @@ $('#projForm').addEventListener('submit',async function(e){
 /* ---------- website ke projects (photos + links) database me daalein ---------- */
 var projectSeedBusy=false,projectSeedTried=false;
 function maybeSeedProjects(){
-  if(projectSeedBusy||projectSeedTried||setupBroken)return;
+  if(projectSeedBusy||projectSeedTried||setupBroken||projectsBlocked)return;
   projectSeedTried=true;
   importWebsiteProjects(null,true);
 }
@@ -1313,7 +1372,7 @@ async function importWebsiteProjects(btn,quiet){
       if(r.error)throw r.error;
     }
     toast(quiet?'Website ke projects upload ho gaye':('Imported '+rows.length+' projects'));
-  }catch(ex){toast(nice(ex),true)}
+  }catch(ex){showProjectPerm(ex);toast(nice(ex),true)}
   projectSeedBusy=false;
   if(btn){btn.disabled=false;btn.textContent='Import current website projects'}
   loadProjects();
@@ -1420,9 +1479,13 @@ $('#seedBtn').addEventListener('click',async function(){
    DASHBOARD
 ========================================================= */
 async function loadDashboard(){
-  var pr=await sb.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
+  var pr={data:[]},cr={count:0};
+  if(!projectsBlocked){
+    pr=await sb.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
+    cr=await sb.from('projects').select('id',{count:'exact',head:true});
+    if(showProjectPerm(pr.error)||showProjectPerm(cr.error)){pr={data:[]};cr={count:0}}
+  }
   var mr=await sb.from('messages').select('id,name,email,created_at').order('created_at',{ascending:false}).limit(5);
-  var cr=await sb.from('projects').select('id',{count:'exact',head:true});
   var mr2=await sb.from('messages').select('id',{count:'exact',head:true});
   var box=$('#dashboardStats');box.replaceChildren();
   box.appendChild(statCard('Total Projects',cr.count||0,'Projects'));
