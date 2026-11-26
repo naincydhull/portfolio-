@@ -145,6 +145,25 @@ dialog h2{font-size:26px}
 .skills-preview .sk-icon{flex:0 0 auto;width:44px;height:44px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center}
 .skills-preview .sk-icon img{width:26px;height:26px;display:block;object-fit:contain}
 .skills-preview .sk-tool-name{font-size:15px;font-weight:500;color:var(--ink)}
+/* Projects preview — same look as the portfolio project rows */
+.proj-preview{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 28px;margin-bottom:24px}
+.proj-preview .pj{cursor:pointer}
+.proj-preview .pj:hover{outline:1px dashed #c8782f;outline-offset:4px;border-radius:3px}
+.proj-preview .pj-eyebrow{font-size:14px;letter-spacing:2px;color:#a8541f}
+.proj-preview .pj-head{display:inline-block;margin:12px 0 8px;font-family:'Playfair Display',Georgia,serif;font-size:clamp(30px,3.4vw,42px);color:var(--ink)}
+.proj-preview .pj-sub{margin:0 0 26px;color:#5a4d44;font-size:15px;line-height:1.7}
+.proj-preview .pj-row{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:28px;align-items:center;padding:24px 0;border-top:1px solid var(--line)}
+.proj-preview .pj-shot{width:100%;max-height:300px;object-fit:cover;border-radius:14px;box-shadow:0 14px 30px rgba(31,26,23,.28);background:#f4ece0;display:block}
+.proj-preview .pj-kind{font-size:13px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:#a8541f}
+.proj-preview .pj-title{display:inline-block;margin:6px 0 12px;padding-bottom:6px;border-bottom:3px solid #c8782f;font-family:'Playfair Display',Georgia,serif;font-size:30px;color:var(--ink)}
+.proj-preview .pj-desc{margin:0 0 14px;font-size:16px;line-height:1.7;color:#5a4d44}
+.proj-preview .pj-points{margin:0 0 14px;padding:0;list-style:none;display:grid;gap:8px}
+.proj-preview .pj-points li{font-size:15px;line-height:1.5;color:var(--ink);display:flex;gap:10px;align-items:flex-start}
+.proj-preview .pj-points li::before{content:"";flex:0 0 8px;height:8px;margin-top:7px;border-radius:50%;background:#c8782f}
+.proj-preview .pj-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.proj-preview .pj-tags span{font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid #cdbba0;color:#4a3f38;background:rgba(255,255,255,.5)}
+.proj-preview .pj-link{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:1.5px solid #a8541f;color:#a8541f;font-size:14px;font-weight:500;text-decoration:none;border-radius:2px}
+.proj-preview .pj-link:hover{background:#a8541f;color:#fff}
 .hero .photo-frame{position:relative;flex:0 0 180px;width:180px;box-sizing:border-box;padding:6px;border:2px solid #a59d8e;border-radius:22px;background:#f4ece0;box-shadow:0 18px 36px rgba(74,63,56,.2);z-index:1}
 .hero .photo-frame::after{content:"";position:absolute;inset:-5px;border:1px solid #d9a46f;border-radius:26px;pointer-events:none}
 .hero .dash-photo{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:14px;background:#f4ece0}
@@ -166,9 +185,9 @@ dialog h2{font-size:26px}
 .fieldset>h3{font-size:19px;margin-bottom:4px}
 .fieldset>.hint{display:block;margin-bottom:14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media (max-width:700px){.grid2,.two,.three{grid-template-columns:1fr}.edu-preview .ed-grid,.skills-preview .sk-grid,.skills-preview .sk-tools{grid-template-columns:1fr}.edu-preview,.about-preview,.skills-preview{padding:22px 16px}.edu-preview .ed-card,.skills-preview .sk-card,.skills-preview .sk-tool{min-width:0}}
+@media (max-width:700px){.grid2,.two,.three{grid-template-columns:1fr}.edu-preview .ed-grid,.skills-preview .sk-grid,.skills-preview .sk-tools{grid-template-columns:1fr}.edu-preview,.about-preview,.skills-preview{padding:22px 16px}.edu-preview .ed-card,.skills-preview .sk-card,.skills-preview .sk-tool{min-width:0}.proj-preview .pj-row{grid-template-columns:1fr;gap:18px}.proj-preview{padding:22px 16px}}
 /* list editor */
-.list{display:flex;flex-direction:column;gap:14px}
+.list{display:flex;flex-direction:column;gap:14px;overflow-x:auto}
 .lrow{border:1px solid var(--line);background:#fff;padding:14px;display:grid;gap:12px;grid-template-columns:1fr auto;align-items:start}
 .lrow .fields{display:grid;gap:12px}
 .lrow .acts{justify-content:flex-end}
@@ -409,6 +428,7 @@ dialog h2{font-size:26px}
 
 <!-- ============ PROJECTS ============ -->
 <div id="tab-projects" hidden>
+<div class="proj-preview" id="projPreview"></div>
 <div class="bar"><h2>Projects</h2>
 <button class="ghost" id="importBtn" hidden>Import current website projects</button>
 <button id="addBtn">+ Add project</button>
@@ -687,6 +707,45 @@ function updateSkillsPreview(){
     });
   }
 }
+/* Projects preview — database se aaya project yahin website jaisa dikhta hai. */
+function projImgs(p){
+  return (p&&p.images||[]).map(function(u){
+    return (typeof u==='string')?parseImg(u):{url:u&&u.url||'',cap:u&&u.cap||''};
+  });
+}
+function updateProjectsPreview(){
+  var box=$('#projPreview');if(!box)return;
+  var j=content.projects||{},list=(typeof projects!=='undefined'&&projects.length)?projects:[];
+  box.replaceChildren();
+  [['pjHeadEdit','pj-eyebrow','#j_eyebrow',j.eyebrow||'Projects'],
+   ['pjHeadMain','pj-head','#j_head',j.heading||"Things I've built"]].forEach(function(a){
+    var d=el('span',a[1]+' pj',a[3]);d.id=a[0];d.setAttribute('data-edit',a[2]);d.title='Click to edit';box.appendChild(d);
+  });
+  if(j.subtitle){var sub=el('p','pj-sub pj',j.subtitle);sub.setAttribute('data-edit','#j_sub');sub.title='Click to edit';box.appendChild(sub)}
+  if(!list.length){
+    box.appendChild(el('p','empty','Website ke projects abhi upload ho rahe hain… Agar upload na ho to neeche "Import current website projects" dabayen.'));
+    return;
+  }
+  list.forEach(function(p,k){
+    var row=el('div','pj-row');row.setAttribute('data-proj',String(k));
+    var first=projImgs(p).filter(function(i){return i.url})[0];
+    if(first){var im=el('img','pj-shot');im.src=first.url;im.alt=p.title+' screenshot';im.loading='lazy';row.appendChild(im)}
+    var info=el('div');
+    if(p.kind)info.appendChild(el('div','pj-kind pj',p.kind));
+    info.appendChild(el('h3','pj-title pj',p.title||'Project'));
+    if(p.description)info.appendChild(el('p','pj-desc pj',p.description));
+    if(p.points&&p.points.length){
+      var ul=el('ul','pj-points');p.points.forEach(function(t){ul.appendChild(el('li',null,t))});info.appendChild(ul);
+    }
+    if(p.tags&&p.tags.length){
+      var tags=el('div','pj-tags');p.tags.forEach(function(t){tags.appendChild(el('span',null,t))});info.appendChild(tags);
+    }
+    if(p.live_url){
+      var a=el('a','pj-link','View Live Project ↗');a.href=p.live_url;a.target='_blank';a.rel='noopener';info.appendChild(a);
+    }
+    row.appendChild(info);box.appendChild(row);
+  });
+}
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#topName').textContent='';$('#topPhoto').style.display='none'}
 
 /* Preview par kisi bhi text/photo par click karke niche ka field direct edit karein. */
@@ -781,6 +840,15 @@ function focusSkillsField(list,k,field){
     if(f){f.focus();if(f.scrollIntoView)f.scrollIntoView({block:'center',behavior:'smooth'});if(f.select)f.select()}
   },80);
 }
+/* Projects preview: heading par click field, project par click editor khole. */
+$('#projPreview').addEventListener('click',function(e){
+  var ed=e.target.closest('[data-edit]');
+  if(ed){e.preventDefault();focusEdit(ed.getAttribute('data-edit'),'#tab-projects');return}
+  var row=e.target.closest('[data-proj]');if(!row)return;
+  e.preventDefault();
+  var p=projects[parseInt(row.getAttribute('data-proj'),10)];
+  if(p&&typeof openEditor==='function')openEditor(p);
+});
 
 /* ---------- tabs ---------- */
 $$('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
@@ -802,6 +870,7 @@ KEYS.forEach(function(k){content[k]={}});
 updateAboutPreview();
 updateEducationPreview();
 updateSkillsPreview();
+updateProjectsPreview();
 var setupBroken=false;
 
 async function loadContent(){
@@ -819,6 +888,15 @@ async function loadContent(){
     sb.from('site_content').upsert({key:'education',value:content.education,updated_at:new Date().toISOString()})
       .then(function(res){if(res&&res.error)console.warn('education seed:',res.error)});
   }
+  /* Projects section heading database me na ho to website se bhar dein. */
+  if(!content.projects||!content.projects.heading){
+    content.projects={
+      eyebrow:'Projects',heading:"Things I've built",
+      subtitle:'Here are the games, apps and websites I’ve built. Browse the screenshots, then click “View Live Project” to open the real thing.'
+    };
+    sb.from('site_content').upsert({key:'projects',value:content.projects,updated_at:new Date().toISOString()})
+      .then(function(res){if(res&&res.error)console.warn('projects seed:',res.error)});
+  }
   /* Skills + Toolkit database me na ho to website se auto-upload. */
   if(!content.skills||((!content.skills.cards||!content.skills.cards.length)&&(!content.skills.tools||!content.skills.tools.length))){
     content.skills=JSON.parse(JSON.stringify(SKILLS_DEFAULT));
@@ -830,6 +908,8 @@ async function loadContent(){
   updateAboutPreview();
   updateEducationPreview();
   updateSkillsPreview();
+  updateProjectsPreview();
+  maybeSeedProjects();
   if(!$('#tab-dashboard').hidden)loadDashboard();
 }
 $('#retrySetup').addEventListener('click',function(){location.reload()});
@@ -1102,7 +1182,8 @@ async function loadProjects(){
   if(r.error){box.appendChild(el('p','empty','Could not load projects: '+nice(r.error)));return}
   projects=r.data||[];
   $('#importBtn').hidden=projects.length>0;
-  if(!projects.length){box.appendChild(el('p','empty','No projects yet. Add one, or import the ones already on your website.'));return}
+  updateProjectsPreview();
+  if(!projects.length){maybeSeedProjects();box.appendChild(el('p','empty','Website ke projects upload ho rahe hain… ya neeche "Import current website projects" dabayen.'));return}
   var table=el('table');
   var thead=el('thead'),trh=el('tr');
   ['Image','Title','Type','Order','Screenshots','Actions'].forEach(function(h){trh.appendChild(el('th',null,h))});
@@ -1196,12 +1277,20 @@ $('#projForm').addEventListener('submit',async function(e){
   btn.disabled=false;btn.textContent='Save';
 });
 
-/* ---------- import the projects that are already in index.html ---------- */
-$('#importBtn').addEventListener('click',async function(){
-  if(!confirm('Copy the projects currently written in your website file into the database? Their screenshots will be uploaded too.'))return;
-  var b=$('#importBtn');b.disabled=true;
+/* ---------- website ke projects (photos + links) database me daalein ---------- */
+var projectSeedBusy=false,projectSeedTried=false;
+function maybeSeedProjects(){
+  if(projectSeedBusy||projectSeedTried||setupBroken)return;
+  projectSeedTried=true;
+  importWebsiteProjects(null,true);
+}
+async function importWebsiteProjects(btn,quiet){
+  if(!quiet&&!confirm('Copy the projects currently written in your website file into the database? Their screenshots will be uploaded too.'))return;
+  projectSeedBusy=true;
+  if(btn)btn.disabled=true;
+  function status(txt){if(btn)btn.textContent=txt;else updateProjectsPreviewStatus(txt)}
   try{
-    b.textContent='Reading website…';
+    status('Reading website…');
     var html=await (await fetch('index.html',{cache:'no-store'})).text();
     var doc=new DOMParser().parseFromString(html,'text/html');
     var rows=[].slice.call(doc.querySelectorAll('.pj-list .pj-row'));
@@ -1210,7 +1299,7 @@ $('#importBtn').addEventListener('click',async function(){
       var row=rows[n],t=function(s){var x=row.querySelector(s);return x?x.textContent.trim():''};
       var shots=[].slice.call(row.querySelectorAll('.shot')),urls=[];
       for(var k=0;k<shots.length;k++){
-        b.textContent='Project '+(n+1)+'/'+rows.length+' · image '+(k+1)+'/'+shots.length+'…';
+        status('Project '+(n+1)+'/'+rows.length+' · image '+(k+1)+'/'+shots.length+'…');
         var blob=await (await fetch(shots[k].getAttribute('src'))).blob();
         urls.push(makeImg(await upload(await compress(blob,1400)),shots[k].getAttribute('data-cap')||''));
       }
@@ -1223,10 +1312,17 @@ $('#importBtn').addEventListener('click',async function(){
       });
       if(r.error)throw r.error;
     }
-    toast('Imported '+rows.length+' projects');
+    toast(quiet?'Website ke projects upload ho gaye':('Imported '+rows.length+' projects'));
   }catch(ex){toast(nice(ex),true)}
-  b.disabled=false;b.textContent='Import current website projects';loadProjects();
-});
+  projectSeedBusy=false;
+  if(btn){btn.disabled=false;btn.textContent='Import current website projects'}
+  loadProjects();
+}
+function updateProjectsPreviewStatus(txt){
+  var box=$('#projPreview');if(!box)return;
+  var p=box.querySelector('.empty');if(p)p.textContent=txt+'…';
+}
+$('#importBtn').addEventListener('click',function(){importWebsiteProjects($('#importBtn'),false)});
 
 /* =========================================================
    Import EVERYTHING that is written in index.html
