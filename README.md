@@ -38,6 +38,9 @@ This creates the `site_content` table and also fixes two things that were broken
 
 - the website could not **read** `projects` (`permission denied for table projects`)
 - visitors could not **send** messages (`insert` was not allowed)
+- the logged-in admin could not **add/edit/delete** projects (HTTP 403) because the `authenticated` role had no grant on `projects`
+
+**If you see 403 errors in `admin.html` while adding a project:** open `setup.html`, press **Copy SQL**, paste it into the Supabase SQL Editor and press **Run** again, then reload `admin.html`. It is safe to re-run; nothing is deleted.
 
 ## Everyday use
 
