@@ -86,16 +86,24 @@ dialog h2{font-size:26px}
 .err{color:var(--bad);font-size:14px;min-height:20px}
 /* dashboard */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
-/* Dashboard — portfolio style */
-.hero{background:#4a3f38;color:#fff;padding:36px 32px;border-radius:20px;margin-bottom:28px;display:flex;align-items:center;gap:28px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:#dcae82;opacity:.25;filter:blur(50px)}
-.hero::after{content:"";position:absolute;left:-40px;bottom:-50px;width:180px;height:180px;border-radius:50%;background:#e0c185;opacity:.2;filter:blur(50px)}
-.hero .dash-photo{width:130px;height:130px;border-radius:24px;object-fit:cover;border:3px solid #d9a46f;flex:0 0 auto;background:#f4ece0;position:relative;z-index:1}
-.hero .hero-text{flex:1;min-width:0;position:relative;z-index:1}
-.hero .hero-text .hi{font-size:13px;letter-spacing:3px;color:#e0864f;text-transform:uppercase;margin-bottom:6px}
-.hero h1{margin:0 0 8px;font-size:30px;font-family:'Playfair Display',Georgia,serif}
-.hero h1 span{color:#e0864f}
-.hero p{margin:0;opacity:.85;font-size:15.5px;line-height:1.6}
+/* Dashboard hero — same look as the portfolio hero */
+.hero{background:#fbf7ef;border:1px solid #d9ccb8;padding:36px 32px;border-radius:20px;margin-bottom:28px;display:flex;flex-wrap:wrap;align-items:center;gap:34px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;left:-120px;top:-110px;width:360px;height:360px;border-radius:50%;background:#dcae82;opacity:.45;filter:blur(60px)}
+.hero::after{content:"";position:absolute;right:-100px;bottom:-100px;width:320px;height:320px;border-radius:50%;background:#e0c185;opacity:.4;filter:blur(60px)}
+.hero .hero-text{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.hero .hi{font-size:14px;letter-spacing:3px;color:#a8541f;margin:0}
+.hero h1{font-size:clamp(32px,4vw,48px);line-height:1.1;color:var(--ink);margin:0}
+.hero .dash-tag{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;font-size:clamp(21px,2.6vw,30px);color:#a8541f;margin:0}
+.hero .dash-intro{font-size:15px;line-height:1.7;color:#5a4d44;margin:0;max-width:540px}
+.hero .dash-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-top:4px}
+.hero .dash-ctas a,.hero .dash-ctas button{padding:11px 20px;font-size:14px;text-decoration:none;font-family:inherit}
+.hero .dash-ctas .a{background:#a8541f;color:#fff}
+.hero .dash-ctas .b{border:1px solid #cbb99f;background:#fbf7ef;color:var(--ink)}
+.hero .editable{cursor:pointer}
+.hero .editable:hover{outline:1px dashed #c8782f;outline-offset:4px;border-radius:3px}
+.hero .photo-frame{position:relative;flex:0 0 180px;width:180px;box-sizing:border-box;padding:6px;border:2px solid #a59d8e;border-radius:22px;background:#f4ece0;box-shadow:0 18px 36px rgba(74,63,56,.2);z-index:1}
+.hero .photo-frame::after{content:"";position:absolute;inset:-5px;border:1px solid #d9a46f;border-radius:26px;pointer-events:none}
+.hero .dash-photo{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:14px;background:#f4ece0}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
 .stat{background:var(--card);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:6px;border-radius:14px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
 .stat:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(74,63,56,.12)}
@@ -184,7 +192,16 @@ dialog h2{font-size:26px}
 </div>
 
 <div id="tab-dashboard">
-<div class="hero"><img id="dashPhoto" class="dash-photo" alt="" style="display:none"><div class="hero-text"><div class="hi">Welcome back</div><h1><span id="dashName">Admin</span></h1><p>Poori website ki information yahin se manage karein — koi bhi badlav karein aur Save dabayen.</p></div></div>
+<div class="hero">
+<div class="hero-text">
+<span class="hi editable" id="dashEyebrow" data-edit="#p_eyebrow" title="Click to edit">Portfolio</span>
+<h1 class="editable" id="dashName" data-edit="#p_first" title="Click to edit">Naincy Dhull</h1>
+<div class="dash-tag editable" id="dashTag" data-edit="#p_tagline" title="Click to edit">Digital Marketing &amp; Web Development</div>
+<p class="dash-intro editable" id="dashIntro" data-edit="#p_intro" title="Click to edit">I build websites and small products with AI-assisted development, and help businesses grow online through digital marketing.</p>
+<div class="dash-ctas"><button type="button" class="a editable" id="dashCta1" data-edit="#p_cta1" title="Click to edit">View Projects</button><button type="button" class="b editable" id="dashCta2" data-edit="#p_cta2" title="Click to edit">Contact Me</button></div>
+</div>
+<div class="photo-frame editable" data-edit="#p_heroFile" title="Click to change photo"><img id="dashPhoto" class="dash-photo" alt="Naincy Dhull, digital marketer from Kaithal" style="display:none"></div>
+</div>
 <div class="stats" id="dashboardStats"></div>
 <div class="recent"><h3>Recent Projects</h3><div class="list" id="recentProj"></div></div>
 <div class="recent" style="margin-top:22px"><h3>Recent Messages</h3><div class="list" id="recentMsg"></div></div>
@@ -193,7 +210,7 @@ dialog h2{font-size:26px}
 <!-- ============ PROFILE / HERO ============ -->
 <div id="tab-profile" hidden>
 <div class="bar"><h2>Profile / Hero</h2><button type="button" class="saveTab" data-key="profile">Save changes</button></div>
-<p class="hint" style="margin-top:-8px">Website ka sabse upar wala (hero) hissa. Save karne ke baad website par refresh karke dekhein.</p>
+<p class="hint" style="margin-top:-8px">Website ka sabse upar wala (hero) hissa. Dashboard wale hero par kisi bhi text ya photo par click karke aap yahin directly edit kar sakti hain. Save karne ke baad website par refresh karke dekhein.</p>
 <form class="tabform" id="form-profile" onsubmit="return false">
 <div class="fieldset">
 <h3>Heading</h3><span class="hint">Upar chhoti line, naam aur tagline.</span>
@@ -456,8 +473,14 @@ function enter(session){
 function updateDashHero(){
   var p=content.profile||{};
   var name=((p.firstName||'')+' '+(p.lastName||'')).trim();
-  $('#dashName').textContent=name||'Admin';
+  $('#dashName').textContent=name||'Naincy Dhull';
   $('#topName').textContent=name||'Admin';
+  $('#dashEyebrow').textContent=p.eyebrow||'Portfolio';
+  $('#dashTag').textContent=p.tagline||'Digital Marketing & Web Development';
+  $('#dashIntro').textContent=p.intro||'I build websites and small products with AI-assisted development, and help businesses grow online through digital marketing.';
+  function heroText(id,text,fallback){$(id).textContent=text||fallback}
+  heroText('#dashCta1',p.cta1,'View Projects');
+  heroText('#dashCta2',p.cta2,'Contact Me');
   var ph=$('#dashPhoto'),tph=$('#topPhoto');
   if(p.heroPhoto&&/^https?:\/\//i.test(p.heroPhoto)){
     ph.src=p.heroPhoto;ph.style.display='block';
@@ -467,6 +490,20 @@ function updateDashHero(){
   }
 }
 function leave(){entered=false;$('#app').hidden=true;$('#login').hidden=false;$('#topName').textContent='';$('#topPhoto').style.display='none'}
+
+/* Dashboard hero ek preview ki tarah hai — kisi bhi text/photo par click karke
+   Profile / Hero tab ka related field direct edit kar sakte hain. */
+function openHeroField(sel){
+  var nav=document.querySelector('.side nav a[data-tab="profile"]');
+  if(nav)nav.click();
+  setTimeout(function(){
+    var f=$(sel);if(!f)return;
+    f.focus();
+    if(f.scrollIntoView)f.scrollIntoView({block:'center',behavior:'smooth'});
+    if(f.select)f.select();
+  },80);
+}
+$$('.hero .editable').forEach(function(e){e.addEventListener('click',function(){openHeroField(e.getAttribute('data-edit'))})});
 
 /* ---------- tabs ---------- */
 $$('.side nav a').forEach(function(b){b.addEventListener('click',function(e){
