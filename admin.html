@@ -435,17 +435,18 @@ function toast(msg,bad){var t=$('#toast');t.textContent=msg;t.className=bad?'bad
 function nice(err){var m=(err&&err.message)||String(err);if(/row-level security|permission|not authorized|policy/i.test(m))return 'Permission denied. Log in with the admin email.';return m}
 
 /* ---------- login ---------- */
+var entered=false;
 $('#loginForm').addEventListener('submit',async function(e){
   e.preventDefault();var b=$('#loginBtn');$('#loginErr').textContent='';b.disabled=true;b.textContent='Logging in…';
   var r=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});
   b.disabled=false;b.textContent='Log in';
   if(r.error){$('#loginErr').textContent='Wrong email or password.';}
-  else{$('#password').value='';}
+  else{$('#password').value='';enter(r.data.session)}
 });
-$('#logout').addEventListener('click',function(){sb.auth.signOut()});
-sb.auth.onAuthStateChange(function(_ev,session){setTimeout(function(){session?enter(session):leave()},0)});
-sb.auth.getSession().then(function(r){if(r.data&&r.data.session)enter(r.data.session)});
-var entered=false;
+$('#logout').addEventListener('click',async function(){await sb.auth.signOut({scope:'local'});leave()});
+/* Har open par purana session hata do taake har baar email/password manga jaye. */
+$('#email').value='';$('#password').value='';leave();
+sb.auth.signOut({scope:'local'}).catch(function(){});
 function enter(session){
   $('#login').hidden=true;$('#app').hidden=false;
   if(!entered){entered=true;loadContent();loadDashboard()}
