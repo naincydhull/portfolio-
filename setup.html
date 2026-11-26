@@ -63,6 +63,15 @@
     </div>
   </div>
 
+  <div class="step">
+    <div class="num">!</div>
+    <div>
+      <h2>Agar admin me 403 / "Permission denied" aaye</h2>
+      <p>Ye chota SQL sirf permissions theek karta hai. Kholein, <b>Run</b> dabayen, phir admin.html reload karein. Kuch delete nahi hota.</p>
+      <a class="btn" id="fix403" href="#" style="background:#b3261e">403 fix SQL kholein</a>
+    </div>
+  </div>
+
   <div class="foot">Ye page sirf ek baar ka setup hai. Baad me iski zarurat nahi padegi.</div>
 </div>
 
@@ -157,8 +166,35 @@ create policy "admin delete messages"
 -- ------------------------------------------------------------
 `;
 var PROJECT = 'jgieoxivnciypxxlnzuj';
-document.getElementById('openEditor').href =
-  'https://supabase.com/dashboard/project/' + PROJECT + '/sql/new?content=' + encodeURIComponent(SETUP_SQL);
+var FIX_SQL = `-- ADMIN 403 FIX — Run once in Supabase SQL Editor (safe to re-run)
+grant usage on schema public to anon, authenticated;
+grant select on table public.site_content to anon;
+grant select, insert, update, delete on table public.site_content to authenticated;
+grant select on table public.projects to anon;
+grant select, insert, update, delete on table public.projects to authenticated;
+grant insert on table public.messages to anon;
+grant select, delete on table public.messages to authenticated;
+alter table public.site_content enable row level security;
+alter table public.projects enable row level security;
+alter table public.messages enable row level security;
+drop policy if exists "public read site_content" on public.site_content;
+create policy "public read site_content" on public.site_content for select to anon using (true);
+drop policy if exists "admin all site_content" on public.site_content;
+create policy "admin all site_content" on public.site_content for all to authenticated using (true) with check (true);
+drop policy if exists "public read projects" on public.projects;
+create policy "public read projects" on public.projects for select to anon using (true);
+drop policy if exists "admin all projects" on public.projects;
+create policy "admin all projects" on public.projects for all to authenticated using (true) with check (true);
+drop policy if exists "public send messages" on public.messages;
+create policy "public send messages" on public.messages for insert to anon with check (true);
+drop policy if exists "admin read messages" on public.messages;
+create policy "admin read messages" on public.messages for select to authenticated using (true);
+drop policy if exists "admin delete messages" on public.messages;
+create policy "admin delete messages" on public.messages for delete to authenticated using (true);
+`;
+var editorBase = 'https://supabase.com/dashboard/project/' + PROJECT + '/sql/new?content=';
+document.getElementById('openEditor').href = editorBase + encodeURIComponent(SETUP_SQL);
+document.getElementById('fix403').href = editorBase + encodeURIComponent(FIX_SQL);
 
 document.getElementById('copySql').addEventListener('click', function () {
   var msg = document.getElementById('msg');

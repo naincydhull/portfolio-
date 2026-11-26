@@ -145,7 +145,7 @@ dialog h2{font-size:26px}
 <label>Email<input type="email" id="email" autocomplete="username" required></label>
 <label>Password<input type="password" id="password" autocomplete="current-password" required></label>
 <div class="err" id="loginErr" role="alert"></div>
-<button type="submit" id="loginBtn">Log in</button>
+<button type="submit" id="loginBtn" disabled>Log in</button>
 </form>
 </section>
 
@@ -432,21 +432,23 @@ function setVal(id,v){var e=$(id);if(e)e.value=v==null?'':v}
 
 var toastT;
 function toast(msg,bad){var t=$('#toast');t.textContent=msg;t.className=bad?'bad':'';t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},3600)}
-function nice(err){var m=(err&&err.message)||String(err);if(/row-level security|permission|not authorized|policy/i.test(m))return 'Permission denied. Log in with the admin email.';return m}
+function nice(err){var m=(err&&err.message)||String(err);if(/row-level security|permission|not authorized|policy/i.test(m))return 'Permission denied. Dobara login karein ya setup.html se SQL Run karein. Detail: '+m;return m}
 
 /* ---------- login ---------- */
-var entered=false;
+var entered=false,loginReady=false;
 $('#loginForm').addEventListener('submit',async function(e){
-  e.preventDefault();var b=$('#loginBtn');$('#loginErr').textContent='';b.disabled=true;b.textContent='Logging in…';
+  e.preventDefault();if(!loginReady)return;var b=$('#loginBtn');$('#loginErr').textContent='';b.disabled=true;b.textContent='Logging in…';
   var r=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});
   b.disabled=false;b.textContent='Log in';
   if(r.error){$('#loginErr').textContent='Wrong email or password.';}
   else{$('#password').value='';enter(r.data.session)}
 });
 $('#logout').addEventListener('click',async function(){await sb.auth.signOut({scope:'local'});leave()});
-/* Har open par purana session hata do taake har baar email/password manga jaye. */
+/* Har open par purana session hata do taake har baar email/password manga jaye.
+   SignOut complete hone se pehle login allow mat karein — warna naya session bhi mit sakta hai. */
 $('#email').value='';$('#password').value='';leave();
-sb.auth.signOut({scope:'local'}).catch(function(){});
+var lb=$('#loginBtn');lb.disabled=true;
+sb.auth.signOut({scope:'local'}).catch(function(){}).finally(function(){loginReady=true;lb.disabled=false});
 function enter(session){
   $('#login').hidden=true;$('#app').hidden=false;
   if(!entered){entered=true;loadContent();loadDashboard()}
