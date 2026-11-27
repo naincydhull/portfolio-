@@ -52,6 +52,6 @@ First time only: **Settings → Load website content into the database** copies 
 
 ## SEO / live URL
 
-`index.html`, `robots.txt` and `sitemap.xml` now use the primary live URL `https://naincydhull-portfolio.vercel.app` (no trailing slash). The same site also runs as a backup on Render at `https://portfolio-22oc.onrender.com`. If the primary domain changes, update all three files. Images live in `images/`; `og-image.jpg` and `favicon.ico` are generated from the hero photo. `admin.html` stays `noindex`.
+`index.html`, `robots.txt` and `sitemap.xml` use the primary live URL `https://naincydhull-portfolio.vercel.app` (no trailing slash). The same site also runs on Render at `https://portfolio-22oc.onrender.com`. To give Render its own canonical/OG/sitemap URLs, set Render's **Build Command** to `bash render-build.sh` — it rewrites those three files at deploy time only. If the primary domain changes, update all three files plus `render-build.sh`. Images live in `images/`; `og-image.jpg` and `favicon.ico` are generated from the hero photo. `admin.html` stays `noindex`.
 
 Never put your Supabase secret key or any password inside these files.
