@@ -889,6 +889,12 @@ function showProjectPerm(err){
   if($('#permWarn'))$('#permWarn').hidden=false;
   return true;
 }
+function clearProjectPerm(){
+  projectsBlocked=false;
+  if($('#permWarn'))$('#permWarn').hidden=true;
+  loadDashboard();
+  loadProjects();
+}
 
 async function loadContent(){
   var r=await sb.from('site_content').select('*');
@@ -1017,7 +1023,7 @@ if(copyFix)copyFix.addEventListener('click',function(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(FIX_SQL).then(ok,fallback);
   else fallback();
 });
-var retryPerm=$('#retryPerm');if(retryPerm)retryPerm.addEventListener('click',function(){location.reload()});
+var retryPerm=$('#retryPerm');if(retryPerm)retryPerm.addEventListener('click',clearProjectPerm);
 
 async function saveContent(key,value,btn){
   if(setupBroken){toast('Pehle setup.sql run karein.',true);return false}
@@ -1240,6 +1246,7 @@ async function loadProjects(){
     return;
   }
   projects=r.data||[];
+  if(projectsBlocked){projectsBlocked=false;if($('#permWarn'))$('#permWarn').hidden=true}
   $('#importBtn').hidden=projects.length>0;
   updateProjectsPreview();
   if(!projects.length){maybeSeedProjects();box.appendChild(el('p','empty','Website ke projects upload ho rahe hain… ya neeche "Import current website projects" dabayen.'));return}
@@ -1484,6 +1491,7 @@ async function loadDashboard(){
     pr=await sb.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
     cr=await sb.from('projects').select('id',{count:'exact',head:true});
     if(showProjectPerm(pr.error)||showProjectPerm(cr.error)){pr={data:[]};cr={count:0}}
+    else{projectsBlocked=false;if($('#permWarn'))$('#permWarn').hidden=true}
   }
   var mr=await sb.from('messages').select('id,name,email,created_at').order('created_at',{ascending:false}).limit(5);
   var mr2=await sb.from('messages').select('id',{count:'exact',head:true});
