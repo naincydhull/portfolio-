@@ -487,6 +487,15 @@ dialog h2{font-size:26px}
 <label>Footer line<input id="st_blurb" placeholder="Websites, small products and digital marketing…"></label>
 <label style="margin-top:16px">Copyright line<input id="st_copy" placeholder="© 2026 Naincy Dhull. All rights reserved."></label>
 </div>
+<div class="fieldset" style="margin-top:20px">
+<h3>Admin password</h3><span class="hint">Current email aur password dal kar naya password set karein. Change hone ke baad agle open par naya password chalega.</span>
+<label style="margin-top:12px">Admin email<input id="pw_email" type="email" autocomplete="username" placeholder="you@example.com"></label>
+<label style="margin-top:12px">Current password<input id="pw_current" type="password" autocomplete="current-password"></label>
+<label style="margin-top:12px">New password<input id="pw_new" type="password" autocomplete="new-password" minlength="6"></label>
+<label style="margin-top:12px">Confirm new password<input id="pw_confirm" type="password" autocomplete="new-password" minlength="6"></label>
+<p style="margin:12px 0 0"><button type="button" id="changePwBtn">Change password</button></p>
+<div class="err" id="pwErr" role="alert"></div>
+</div>
 <div class="err" id="err-settings" role="alert"></div>
 </form>
 
@@ -578,8 +587,27 @@ var lb=$('#loginBtn');lb.disabled=true;
 sb.auth.signOut({scope:'local'}).catch(function(){}).finally(function(){loginReady=true;lb.disabled=false});
 function enter(session){
   $('#login').hidden=true;$('#app').hidden=false;
+  var em=session&&session.user&&session.user.email;if(em)setVal('#pw_email',em);
   if(!entered){entered=true;loadContent();loadDashboard()}
 }
+/* Settings → admin password change */
+$('#changePwBtn').addEventListener('click',async function(){
+  var err=$('#pwErr');err.textContent='';
+  var email=val('#pw_email'),cur=val('#pw_current'),nw=$('#pw_new').value,cf=$('#pw_confirm').value;
+  if(!email||!cur||!nw||!cf){err.textContent='Sab fields bhar dein.';return}
+  if(nw!==cf){err.textContent='Naya password aur confirm match nahi kar rahe.';return}
+  if(nw.length<6){err.textContent='Naya password kam se kam 6 characters ka ho.';return}
+  var btn=this;btn.disabled=true;btn.textContent='Changing…';
+  try{
+    var r=await sb.auth.signInWithPassword({email:email,password:cur});
+    if(r.error||!r.data||!r.data.session){err.textContent='Current email ya password galat hai.';return}
+    var u=await sb.auth.updateUser({password:nw});
+    if(u.error)throw u.error;
+    $('#pw_current').value='';$('#pw_new').value='';$('#pw_confirm').value='';
+    toast('Password change ho gaya');
+  }catch(ex){err.textContent=nice(ex)}
+  finally{btn.disabled=false;btn.textContent='Change password'}
+});
 function updateDashHero(){
   var p=content.profile||{};
   var name=((p.firstName||'')+' '+(p.lastName||'')).trim();
