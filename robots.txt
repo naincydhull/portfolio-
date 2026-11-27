@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://portfolio-22oc.onrender.com/sitemap.xml
+Sitemap: https://naincydhull-portfolio.vercel.app/sitemap.xml

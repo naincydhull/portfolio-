@@ -52,6 +52,6 @@ First time only: **Settings → Load website content into the database** copies 
 
 ## SEO / live URL
 
-`index.html`, `robots.txt` and `sitemap.xml` now use the live URL `https://portfolio-22oc.onrender.com` (no trailing slash). If the domain changes, update all three files. Images live in `images/`; `og-image.jpg` and `favicon.ico` are generated from the hero photo. `admin.html` stays `noindex`.
+`index.html`, `robots.txt` and `sitemap.xml` now use the primary live URL `https://naincydhull-portfolio.vercel.app` (no trailing slash). The same site also runs as a backup on Render at `https://portfolio-22oc.onrender.com`. If the primary domain changes, update all three files. Images live in `images/`; `og-image.jpg` and `favicon.ico` are generated from the hero photo. `admin.html` stays `noindex`.
 
 Never put your Supabase secret key or any password inside these files.
