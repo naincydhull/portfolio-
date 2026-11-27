@@ -542,11 +542,17 @@ var $=function(s){return document.querySelector(s)};
 var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 if(!window.supabase){document.body.insertAdjacentHTML('afterbegin','<p style="padding:20px;color:#b3261e">Could not load the Supabase library. Check your internet connection and reload.</p>');return;}
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
+/* Public data (site_content + projects) ko anonymous client se read karein.
+   Admin login sirf editing ke liye hai — read par authenticated policy fail ho to bhi site chalte reh. */
+var sbRead=window.supabase.createClient(SB_URL,SB_KEY,{
+  auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'naincy-public-read'}
+});
 
 /* caption is stored after the link: https://…/a.jpg#cap=Home%20page */
 function parseImg(u){var i=String(u).indexOf('#cap=');return i<0?{url:String(u),cap:''}:{url:u.slice(0,i),cap:decodeURIComponent(u.slice(i+5))}}
 function makeImg(url,cap){return cap?url+'#cap='+encodeURIComponent(cap):url}
 function safeUrl(u){return /^https?:\/\//i.test(u||'')}
+function safeImgUrl(u){return /^(https?:\/\/|\/|\.{0,2}\/|images\/)/i.test(String(u||''))}
 function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function val(id){var e=$(id);return e?String(e.value||'').trim():''}
 function setVal(id,v){var e=$(id);if(e)e.value=v==null?'':v}
@@ -897,7 +903,7 @@ function clearProjectPerm(){
 }
 
 async function loadContent(){
-  var r=await sb.from('site_content').select('*');
+  var r=await sbRead.from('site_content').select('*');
   if(r.error){
     setupBroken=true;$('#setupWarn').hidden=false;
     console.warn('site_content:',r.error);
@@ -1239,7 +1245,7 @@ var projects=[];
 async function loadProjects(){
   var box=$('#projList');box.replaceChildren();
   if(projectsBlocked){box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));return}
-  var r=await sb.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
+  var r=await sbRead.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
   if(r.error){
     if(showProjectPerm(r.error))box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));
     else box.appendChild(el('p','empty','Could not load projects: '+nice(r.error)));
@@ -1257,7 +1263,7 @@ async function loadProjects(){
   var tbody=el('tbody');
   projects.forEach(function(p){
     var tr=el('tr'),th=el('td','thumb');
-    var first=(p.images||[]).map(parseImg).filter(function(i){return safeUrl(i.url)})[0];
+    var first=(p.images||[]).map(parseImg).filter(function(i){return safeImgUrl(i.url)})[0];
     if(first){var im=el('img');im.alt='';im.src=first.url;th.appendChild(im)}else th.textContent='No image';
     var meta=el('td','meta');meta.appendChild(el('b',null,p.title));
     meta.appendChild(el('span',null,[p.kind||'Project','order '+(p.sort_order||0),(p.images||[]).length+' screenshots'].join(' · ')));
@@ -1351,7 +1357,7 @@ function maybeSeedProjects(){
   importWebsiteProjects(null,true);
 }
 async function importWebsiteProjects(btn,quiet){
-  if(!quiet&&!confirm('Copy the projects currently written in your website file into the database? Their screenshots will be uploaded too.'))return;
+  if(!quiet&&!confirm('Copy the projects currently written in your website file into the database? Screenshots are copied as website image paths — no upload needed.'))return;
   projectSeedBusy=true;
   if(btn)btn.disabled=true;
   function status(txt){if(btn)btn.textContent=txt;else updateProjectsPreviewStatus(txt)}
@@ -1366,8 +1372,8 @@ async function importWebsiteProjects(btn,quiet){
       var shots=[].slice.call(row.querySelectorAll('.shot')),urls=[];
       for(var k=0;k<shots.length;k++){
         status('Project '+(n+1)+'/'+rows.length+' · image '+(k+1)+'/'+shots.length+'…');
-        var blob=await (await fetch(shots[k].getAttribute('src'))).blob();
-        urls.push(makeImg(await upload(await compress(blob,1400)),shots[k].getAttribute('data-cap')||''));
+        var src=shots[k].getAttribute('src');
+        if(src)urls.push(makeImg(src,shots[k].getAttribute('data-cap')||''));
       }
       var link=row.querySelector('a.pj-btn');
       var r=await sb.from('projects').insert({
@@ -1488,8 +1494,8 @@ $('#seedBtn').addEventListener('click',async function(){
 async function loadDashboard(){
   var pr={data:[]},cr={count:0};
   if(!projectsBlocked){
-    pr=await sb.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
-    cr=await sb.from('projects').select('id',{count:'exact',head:true});
+    pr=await sbRead.from('projects').select('id,title,kind,sort_order,images,created_at').order('created_at',{ascending:false}).limit(5);
+    cr=await sbRead.from('projects').select('id',{count:'exact',head:true});
     if(showProjectPerm(pr.error)||showProjectPerm(cr.error)){pr={data:[]};cr={count:0}}
     else{projectsBlocked=false;if($('#permWarn'))$('#permWarn').hidden=true}
   }
