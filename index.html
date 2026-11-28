@@ -714,6 +714,13 @@ function getClient(){
 function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function safeUrl(u){return /^https?:\/\//i.test(u||'')}
 function safeImgUrl(u){return /^(https?:\/\/|\/|\.{0,2}\/|images\/)/i.test(String(u||'').trim())}
+function uniqueProjects(list){
+  var seen={},out=[];
+  (list||[]).slice().sort(function(a,b){return String(a.created_at||'').localeCompare(String(b.created_at||''))||String(a.id||'').localeCompare(String(b.id||''))}).forEach(function(p){
+    var k=String((p&&p.title)||'').trim().toLowerCase();if(!k||seen[k])return;seen[k]=1;out.push(p);
+  });
+  return out;
+}
 function parseImg(u){var i=String(u).indexOf('#cap=');return i<0?{url:String(u),cap:''}:{url:u.slice(0,i),cap:decodeURIComponent(u.slice(i+5))}}
 function measure(u){return new Promise(function(res){var i=new Image();i.onload=function(){res({w:i.naturalWidth,h:i.naturalHeight})};i.onerror=function(){res(null)};i.src=u})}
 var ARROW='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>';
@@ -763,7 +770,7 @@ function loadProjects(){
   getClient().then(function(c){watchProjectsLive(c);return c.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true})})
   .then(function(r){
     if(!r||r.error||!r.data||!r.data.length)return;
-    return Promise.all(r.data.map(buildRow)).then(function(rows){
+    return Promise.all(uniqueProjects(r.data).map(buildRow)).then(function(rows){
       var list=document.querySelector('.pj-list');if(!list)return;
       list.replaceChildren.apply(list,rows);
       rows.forEach(function(row){

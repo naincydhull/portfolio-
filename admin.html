@@ -441,6 +441,7 @@ dialog h2{font-size:26px}
 <div class="proj-preview" id="projPreview"></div>
 <div class="bar"><h2>Projects</h2>
 <button class="ghost" id="importBtn" hidden>Import current website projects</button>
+<button class="ghost" id="dedupeBtn">Remove duplicate projects</button>
 <button id="addBtn">+ Add project</button>
 <button type="button" class="saveTab" data-key="projects">Save section heading</button>
 </div>
@@ -757,9 +758,17 @@ function projImgs(p){
     return (typeof u==='string')?parseImg(u):{url:u&&u.url||'',cap:u&&u.cap||''};
   });
 }
+function projectKey(p){return String((p&&p.title)||'').trim().toLowerCase()}
+function uniqueProjects(list){
+  var seen={},out=[];
+  (list||[]).slice().sort(function(a,b){return String(a.created_at||'').localeCompare(String(b.created_at||''))||String(a.id||'').localeCompare(String(b.id||''))}).forEach(function(p){
+    var k=projectKey(p);if(!k||seen[k])return;seen[k]=1;out.push(p);
+  });
+  return out;
+}
 function updateProjectsPreview(){
   var box=$('#projPreview');if(!box)return;
-  var j=content.projects||{},list=(typeof projects!=='undefined'&&projects.length)?projects:[];
+  var j=content.projects||{},list=uniqueProjects(projects);
   box.replaceChildren();
   [['pjHeadEdit','pj-eyebrow','#j_eyebrow',j.eyebrow||'Projects'],
    ['pjHeadMain','pj-head','#j_head',j.heading||"Things I've built"]].forEach(function(a){
@@ -771,7 +780,7 @@ function updateProjectsPreview(){
     return;
   }
   list.forEach(function(p,k){
-    var row=el('div','pj-row');row.setAttribute('data-proj',String(k));
+    var row=el('div','pj-row');row.setAttribute('data-proj',String(projects.indexOf(p)));
     var first=projImgs(p).filter(function(i){return i.url})[0];
     if(first){var im=el('img','pj-shot');im.src=first.url;im.alt=p.title+' screenshot';im.loading='lazy';row.appendChild(im)}
     var info=el('div');
@@ -1279,7 +1288,7 @@ function renderProjects(){
   $('#importBtn').hidden=projects.length>0;
   updateProjectsPreview();
   if(!projects.length){box.appendChild(el('p','empty','Website ke projects upload ho rahe hain… ya neeche "Import current website projects" dabayen.'));return}
-  var sorted=projects.slice().sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0)||String(a.id||'').localeCompare(String(b.id||''))});
+  var sorted=uniqueProjects(projects).sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0)||String(a.id||'').localeCompare(String(b.id||''))});
   var table=el('table');
   var thead=el('thead'),trh=el('tr');
   ['Image','Title','Type','Order','Screenshots','Actions'].forEach(function(h){trh.appendChild(el('th',null,h))});
@@ -1407,7 +1416,10 @@ $('#projForm').addEventListener('submit',async function(e){
 var projectSeedBusy=false,projectSeedTried=false;
 function maybeSeedProjects(){
   if(projectSeedBusy||projectSeedTried||setupBroken||projectsBlocked)return;
+  var seeded=false;try{seeded=localStorage.getItem('naincyProjectsSeeded')==='1'}catch(_){}
+  if(seeded)return;
   projectSeedTried=true;
+  try{localStorage.setItem('naincyProjectsSeeded','1')}catch(_){}
   importWebsiteProjects(null,true);
 }
 async function importWebsiteProjects(btn,quiet){
@@ -1421,6 +1433,7 @@ async function importWebsiteProjects(btn,quiet){
     var doc=new DOMParser().parseFromString(html,'text/html');
     var rows=[].slice.call(doc.querySelectorAll('.pj-list .pj-row'));
     if(!rows.length)throw new Error('No projects found in index.html');
+    var titleMap={};projects.forEach(function(p){var k=projectKey(p);if(k&&!titleMap[k])titleMap[k]=p});
     for(var n=0;n<rows.length;n++){
       var row=rows[n],t=function(s){var x=row.querySelector(s);return x?x.textContent.trim():''};
       var shots=[].slice.call(row.querySelectorAll('.shot')),urls=[];
@@ -1429,15 +1442,20 @@ async function importWebsiteProjects(btn,quiet){
         var src=shots[k].getAttribute('src');
         if(src)urls.push(makeImg(src,shots[k].getAttribute('data-cap')||''));
       }
-      var link=row.querySelector('a.pj-btn');
-      var r=await sb.from('projects').insert({
-        title:t('.pj-info h3'),kind:t('.pj-kind')||null,description:t('.pj-info p')||null,
+      var link=row.querySelector('a.pj-btn'),title=t('.pj-info h3');
+      var payload={
+        title:title,kind:t('.pj-kind')||null,description:t('.pj-info p')||null,
         points:[].slice.call(row.querySelectorAll('.pj-points li')).map(function(li){return li.textContent.trim()}),
         tags:[].slice.call(row.querySelectorAll('.pj-tags span')).map(function(s){return s.textContent.trim()}),
         live_url:link&&safeUrl(link.getAttribute('href'))?link.getAttribute('href'):null,images:urls,sort_order:n*10
-      }).select();
+      };
+      var key=projectKey(payload),existing=titleMap[key];
+      var r=existing?await sb.from('projects').update(payload).eq('id',existing.id).select():await sb.from('projects').insert(payload).select();
       if(r.error)throw r.error;
-      if(r.data&&r.data[0])projects.push(r.data[0]);
+      var saved=r.data&&r.data[0];
+      if(existing){
+        if(saved)for(var j=0;j<projects.length;j++){if(projects[j].id===existing.id){projects[j]=saved;break}}
+      }else if(saved){projects.push(saved);titleMap[key]=saved}
       renderProjects();
     }
     toast(quiet?'Website ke projects upload ho gaye':('Imported '+rows.length+' projects'));
@@ -1451,6 +1469,27 @@ function updateProjectsPreviewStatus(txt){
   var p=box.querySelector('.empty');if(p)p.textContent=txt+'…';
 }
 $('#importBtn').addEventListener('click',function(){importWebsiteProjects($('#importBtn'),false)});
+$('#dedupeBtn').addEventListener('click',async function(){
+  var byTitle={},dups=[];
+  projects.slice().sort(function(a,b){return String(a.created_at||'').localeCompare(String(b.created_at||''))||String(a.id||'').localeCompare(String(b.id||''))}).forEach(function(p){
+    var k=projectKey(p);if(!k)return;
+    if(byTitle[k])dups.push(p);else byTitle[k]=p;
+  });
+  if(!dups.length){toast('Koi duplicate project nahi mila');return}
+  if(!confirm(dups.length+' duplicate project(s) delete kar dein?'))return;
+  var btn=this;btn.disabled=true;btn.textContent='Removing…';
+  var removed=0;
+  for(var i=0;i<dups.length;i++){
+    var r=await sb.from('projects').delete().eq('id',dups[i].id);
+    if(r.error){toast(nice(r.error),true);break}
+    removed++;
+  }
+  btn.disabled=false;btn.textContent='Remove duplicate projects';
+  if(removed){
+    projects=projects.filter(function(p){return !dups.slice(0,removed).some(function(d){return d.id===p.id})});
+    renderProjects();toast(removed+' duplicate project(s) delete ho gaye');loadProjects();
+  }
+});
 
 /* =========================================================
    Import EVERYTHING that is written in index.html
