@@ -50,6 +50,8 @@ This creates the `site_content` table and also fixes two things that were broken
 
 First time only: **Settings → Load website content into the database** copies everything currently written in `index.html` into the database, so you can start editing instead of typing it all again.
 
+Saving a project updates the admin list and preview immediately (no page reload). Open website tabs also refresh automatically via Supabase Realtime; for that, run the SQL in `setup.sql` once so `public.projects` is added to the `supabase_realtime` publication.
+
 ## SEO / live URL
 
 `index.html`, `robots.txt` and `sitemap.xml` use the primary live URL `https://naincydhull-portfolio.vercel.app` (no trailing slash). The same site also runs on Render at `https://portfolio-22oc.onrender.com`. To give Render its own canonical/OG/sitemap URLs, set Render's **Build Command** to `bash render-build.sh` — it rewrites those three files at deploy time only. If the primary domain changes, update all three files plus `render-build.sh`. Images live in `images/`; `og-image.jpg` and `favicon.ico` are generated from the hero photo. `admin.html` stays `noindex`.

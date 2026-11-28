@@ -135,6 +135,20 @@ create policy "admin all projects"
   to authenticated
   using (true) with check (true);
 
+-- realtime: added projects ko open website/admin me turant dikhane ke liye
+alter table public.projects replica identity full;
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'projects'
+  ) then
+    alter publication supabase_realtime add table public.projects;
+  end if;
+end $$;
+
 -- ------------------------------------------------------------
 -- 3) FIX: website visitors must be able to send contact messages
 -- ------------------------------------------------------------
@@ -204,6 +218,8 @@ drop policy if exists "public read projects" on public.projects;
 create policy "public read projects" on public.projects for select to anon using (true);
 drop policy if exists "admin all projects" on public.projects;
 create policy "admin all projects" on public.projects for all to authenticated using (true) with check (true);
+alter table public.projects replica identity full;
+do $$ begin if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'projects') then alter publication supabase_realtime add table public.projects; end if; end $$;
 drop policy if exists "public send messages" on public.messages;
 create policy "public send messages" on public.messages for insert to anon with check (true);
 drop policy if exists "admin read messages" on public.messages;

@@ -57,6 +57,20 @@ create policy "admin all projects"
   to authenticated
   using (true) with check (true);
 
+-- realtime: added projects ko open website/admin me turant dikhane ke liye
+alter table public.projects replica identity full;
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'projects'
+  ) then
+    alter publication supabase_realtime add table public.projects;
+  end if;
+end $$;
+
 -- ------------------------------------------------------------
 -- 3) FIX: website visitors must be able to send contact messages
 -- ------------------------------------------------------------

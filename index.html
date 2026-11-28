@@ -749,8 +749,18 @@ async function buildRow(p){
   if(safeUrl(p.live_url)){var a=el('a','pj-btn','View Live Project');a.href=p.live_url;a.target='_blank';a.rel='noopener';a.insertAdjacentHTML('beforeend',ARROW);info.appendChild(a)}
   row.append(media,info);return row;
 }
+var projectLiveBound=false,projectLiveTimer;
+function watchProjectsLive(c){
+  if(projectLiveBound||!c||!c.channel)return;projectLiveBound=true;
+  try{
+    c.channel('portfolio-projects-live')
+      .on('postgres_changes',{event:'*',schema:'public',table:'projects'},function(){
+        clearTimeout(projectLiveTimer);projectLiveTimer=setTimeout(loadProjects,250);
+      }).subscribe();
+  }catch(e){}
+}
 function loadProjects(){
-  getClient().then(function(c){return c.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true})})
+  getClient().then(function(c){watchProjectsLive(c);return c.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true})})
   .then(function(r){
     if(!r||r.error||!r.data||!r.data.length)return;
     return Promise.all(r.data.map(buildRow)).then(function(rows){

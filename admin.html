@@ -588,7 +588,7 @@ sb.auth.signOut({scope:'local'}).catch(function(){}).finally(function(){loginRea
 function enter(session){
   $('#login').hidden=true;$('#app').hidden=false;
   var em=session&&session.user&&session.user.email;if(em)setVal('#pw_email',em);
-  if(!entered){entered=true;loadContent();loadDashboard()}
+  if(!entered){entered=true;watchProjectsLive();loadContent();loadDashboard()}
 }
 /* Settings → admin password change */
 $('#changePwBtn').addEventListener('click',async function(){
@@ -994,6 +994,8 @@ var SETUP_SQL=[
 'create policy "public read projects" on public.projects for select to anon using (true);',
 'drop policy if exists "admin all projects" on public.projects;',
 'create policy "admin all projects" on public.projects for all to authenticated using (true) with check (true);',
+'alter table public.projects replica identity full;',
+'do $$ begin if not exists (select 1 from pg_publication_tables where pubname = \'supabase_realtime\' and schemaname = \'public\' and tablename = \'projects\') then alter publication supabase_realtime add table public.projects; end if; end $$;',
 'grant insert on table public.messages to anon;',
 'grant select, delete on table public.messages to authenticated;',
 'alter table public.messages enable row level security;',
@@ -1037,6 +1039,8 @@ var FIX_SQL=[
 'create policy "public read projects" on public.projects for select to anon using (true);',
 'drop policy if exists "admin all projects" on public.projects;',
 'create policy "admin all projects" on public.projects for all to authenticated using (true) with check (true);',
+'alter table public.projects replica identity full;',
+'do $$ begin if not exists (select 1 from pg_publication_tables where pubname = \'supabase_realtime\' and schemaname = \'public\' and tablename = \'projects\') then alter publication supabase_realtime add table public.projects; end if; end $$;',
 'insert into storage.buckets (id, name, public) values (\'project-images\', \'project-images\', true) on conflict (id) do update set public = true;',
 'drop policy if exists "public read project images" on storage.objects;',
 'create policy "public read project images" on storage.objects for select to anon, authenticated using (bucket_id = \'project-images\');',
@@ -1270,26 +1274,18 @@ $$('.saveTab').forEach(function(btn){
    PROJECTS (table: projects)
 ========================================================= */
 var projects=[];
-async function loadProjects(){
+function renderProjects(){
   var box=$('#projList');box.replaceChildren();
-  if(projectsBlocked){box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));return}
-  var r=await sbRead.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
-  if(r.error){
-    if(showProjectPerm(r.error))box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));
-    else box.appendChild(el('p','empty','Could not load projects: '+nice(r.error)));
-    return;
-  }
-  projects=r.data||[];
-  if(projectsBlocked){projectsBlocked=false;if($('#permWarn'))$('#permWarn').hidden=true}
   $('#importBtn').hidden=projects.length>0;
   updateProjectsPreview();
-  if(!projects.length){maybeSeedProjects();box.appendChild(el('p','empty','Website ke projects upload ho rahe hain… ya neeche "Import current website projects" dabayen.'));return}
+  if(!projects.length){box.appendChild(el('p','empty','Website ke projects upload ho rahe hain… ya neeche "Import current website projects" dabayen.'));return}
+  var sorted=projects.slice().sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0)||String(a.id||'').localeCompare(String(b.id||''))});
   var table=el('table');
   var thead=el('thead'),trh=el('tr');
   ['Image','Title','Type','Order','Screenshots','Actions'].forEach(function(h){trh.appendChild(el('th',null,h))});
   thead.appendChild(trh);table.appendChild(thead);
   var tbody=el('tbody');
-  projects.forEach(function(p){
+  sorted.forEach(function(p){
     var tr=el('tr'),th=el('td','thumb');
     var first=(p.images||[]).map(parseImg).filter(function(i){return safeImgUrl(i.url)})[0];
     if(first){var im=el('img');im.alt='';im.src=first.url;th.appendChild(im)}else th.textContent='No image';
@@ -1306,12 +1302,37 @@ async function loadProjects(){
   });
   table.appendChild(tbody);box.appendChild(table);
 }
+async function loadProjects(){
+  var box=$('#projList');
+  if(projectsBlocked){box.replaceChildren();box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));return}
+  var r=await sbRead.from('projects').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
+  if(r.error){
+    box.replaceChildren();
+    if(showProjectPerm(r.error))box.appendChild(el('p','empty','Projects 403 — upar wale button se fix SQL run karein, phir Reload.'));
+    else box.appendChild(el('p','empty','Could not load projects: '+nice(r.error)));
+    return;
+  }
+  projects=r.data||[];
+  if(projectsBlocked){projectsBlocked=false;if($('#permWarn'))$('#permWarn').hidden=true}
+  renderProjects();
+  if(!projects.length)maybeSeedProjects();
+}
+var projectLiveTimer;
+function watchProjectsLive(){
+  try{
+    sb.channel('admin-projects-live')
+      .on('postgres_changes',{event:'*',schema:'public',table:'projects'},function(){
+        clearTimeout(projectLiveTimer);projectLiveTimer=setTimeout(loadProjects,200);
+      }).subscribe();
+  }catch(e){}
+}
 async function removeProject(p){
   if(!confirm('Delete "'+p.title+'"? This cannot be undone.'))return;
   var r=await sb.from('projects').delete().eq('id',p.id);
   if(r.error){toast(nice(r.error),true);return}
   await removeFiles((p.images||[]).map(function(u){return parseImg(u).url}));
-  toast('Project deleted');loadProjects();
+  for(var i=0;i<projects.length;i++){if(projects[i].id===p.id){projects.splice(i,1);break}}
+  renderProjects();toast('Project deleted');loadProjects();
 }
 async function removeFiles(urls){
   var paths=[];urls.forEach(function(u){var m=u.match(/\/object\/public\/project-images\/([^#?]+)/);if(m)paths.push(decodeURIComponent(m[1]))});
@@ -1368,11 +1389,16 @@ $('#projForm').addEventListener('submit',async function(e){
       tags:$('#f_tags').value.split(',').map(function(s){return s.trim()}).filter(Boolean),
       live_url:url||null,images:finalImgs,sort_order:parseInt($('#f_order').value,10)||0
     };
-    var r=editing?await sb.from('projects').update(payload).eq('id',editing.id):await sb.from('projects').insert(payload);
+    var r=editing?await sb.from('projects').update(payload).eq('id',editing.id).select():await sb.from('projects').insert(payload).select();
     if(r.error)throw r.error;
-    if(editing){var keep=finalImgs.map(function(u){return parseImg(u).url});
-      await removeFiles((editing.images||[]).map(function(u){return parseImg(u).url}).filter(function(u){return keep.indexOf(u)<0}))}
-    $('#editor').close();toast('Saved');loadProjects();
+    var saved=(r.data&&r.data[0])||Object.assign({},editing||{},payload);
+    if(editing){
+      var at=-1;for(var i=0;i<projects.length;i++){if(projects[i].id===editing.id){at=i;break}}
+      if(at>=0)projects[at]=Object.assign({},projects[at],saved,payload);else projects.unshift(saved);
+      var keep=finalImgs.map(function(u){return parseImg(u).url});
+      await removeFiles((editing.images||[]).map(function(u){return parseImg(u).url}).filter(function(u){return keep.indexOf(u)<0}));
+    }else{projects.unshift(saved)}
+    $('#editor').close();renderProjects();toast('Saved');loadProjects();
   }catch(ex){err.textContent=nice(ex)}
   btn.disabled=false;btn.textContent='Save';
 });
@@ -1409,8 +1435,10 @@ async function importWebsiteProjects(btn,quiet){
         points:[].slice.call(row.querySelectorAll('.pj-points li')).map(function(li){return li.textContent.trim()}),
         tags:[].slice.call(row.querySelectorAll('.pj-tags span')).map(function(s){return s.textContent.trim()}),
         live_url:link&&safeUrl(link.getAttribute('href'))?link.getAttribute('href'):null,images:urls,sort_order:n*10
-      });
+      }).select();
       if(r.error)throw r.error;
+      if(r.data&&r.data[0])projects.push(r.data[0]);
+      renderProjects();
     }
     toast(quiet?'Website ke projects upload ho gaye':('Imported '+rows.length+' projects'));
   }catch(ex){showProjectPerm(ex);toast(nice(ex),true)}
